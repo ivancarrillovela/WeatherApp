@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, switchMap, forkJoin, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -19,27 +19,158 @@ export class WeatherService {
     );
   }
 
-  // Obtener clima completo (One Call 3.0) usando Lat/Lon
-  getWeather(lat: number, lon: number): Observable<any> {
-    // Exclude minutely to save data if not needed
+  // Get Current Weather (API 2.5)
+  getCurrentWeather(lat: number, lon: number): Observable<any> {
     return this.http.get(
-      `${this.baseUrl}?lat=${lat}&lon=${lon}&exclude=minutely&units=imperial&appid=${this.apiKey}`,
+      `${this.baseUrl}/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${this.apiKey}`,
     );
-    // Nota: Las imagenes muestran grados Fahrenheit (72°), por eso units=imperial.
-    // Si quieres Celsius usa units=metric
   }
 
-  // Helper para buscar ciudad y luego clima
+  // Get 5 Day / 3 Hour Forecast (API 2.5)
+  getForecast(lat: number, lon: number): Observable<any> {
+    return this.http.get(
+      `${this.baseUrl}/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${this.apiKey}`,
+    );
+  }
+
+  // Unified method to get full weather data by coordinates (mimics OneCall)
+  getWeather(lat: number, lon: number): Observable<any> {
+    return forkJoin({
+      current: this.getCurrentWeather(lat, lon),
+      forecast: this.getForecast(lat, lon),
+    }).pipe(
+      map(({ current, forecast }) =>
+        this.mapToWeatherData(lat, lon, current, forecast),
+      ),
+    );
+  }
+
+  // Helper to fetch both and map to OneCall-like structure
   getWeatherByCity(city: string): Observable<any> {
     return this.getCoordinates(city).pipe(
       switchMap((geoData: any[]) => {
         if (geoData.length > 0) {
           const { lat, lon } = geoData[0];
-          return this.getWeather(lat, lon);
+          return forkJoin({
+            current: this.getCurrentWeather(lat, lon),
+            forecast: this.getForecast(lat, lon),
+          }).pipe(
+            map(({ current, forecast }) =>
+              this.mapToWeatherData(lat, lon, current, forecast),
+            ),
+          );
         } else {
           throw new Error('City not found');
         }
       }),
     );
+  }
+
+  private mapToWeatherData(
+    lat: number,
+    lon: number,
+    current: any,
+    forecast: any,
+  ): any {
+    // Current Weather
+    const currentWeather = {
+      dt: current.dt,
+      sunrise: current.sys.sunrise,
+      sunset: current.sys.sunset,
+      temp: current.main.temp,
+      feels_like: current.main.feels_like,
+      pressure: current.main.pressure,
+      humidity: current.main.humidity,
+      dew_point: 0, // Not available in 2.5 directly
+      uvi: 0, // Not available in 2.5 standard
+      clouds: current.clouds.all,
+      visibility: current.visibility,
+      wind_speed: current.wind.speed,
+      wind_deg: current.wind.deg,
+      weather: current.weather,
+    };
+
+    // Process Forecast for Daily and Hourly
+    const dailyMap = new Map<string, any>();
+    const hourlyList = [];
+
+    // Hourly: Take first 8 items (approx 24h)
+    for (let i = 0; i < Math.min(forecast.list.length, 8); i++) {
+      const item = forecast.list[i];
+      hourlyList.push({
+        dt: item.dt,
+        temp: item.main.temp,
+        feels_like: item.main.feels_like,
+        pressure: item.main.pressure,
+        humidity: item.main.humidity,
+        dew_point: 0,
+        uvi: 0,
+        clouds: item.clouds.all,
+        visibility: item.visibility,
+        wind_speed: item.wind.speed,
+        wind_deg: item.wind.deg,
+        weather: item.weather,
+        pop: item.pop,
+      });
+    }
+
+    // Daily: Aggregate high/lows
+    forecast.list.forEach((item: any) => {
+      const date = new Date(item.dt * 1000).toISOString().split('T')[0];
+      if (!dailyMap.has(date)) {
+        dailyMap.set(date, {
+          dt: item.dt,
+          temp_min: item.main.temp_min,
+          temp_max: item.main.temp_max,
+          weather: item.weather[0], // Take first weather state
+          humidity: [],
+          wind_speed: [],
+        });
+      }
+      const day = dailyMap.get(date);
+      day.temp_min = Math.min(day.temp_min, item.main.temp_min);
+      day.temp_max = Math.max(day.temp_max, item.main.temp_max);
+      if (item.main.humidity) day.humidity.push(item.main.humidity);
+      // Prioritize mid-day weather icon if available, else keep first
+    });
+
+    const dailyList = Array.from(dailyMap.values())
+      .map((day) => ({
+        dt: day.dt,
+        sunrise: 0,
+        sunset: 0,
+        temp: {
+          day: (day.temp_max + day.temp_min) / 2,
+          min: day.temp_min,
+          max: day.temp_max,
+          night: day.temp_min,
+          eve: day.temp_max,
+          morn: day.temp_min,
+        },
+        feels_like: { day: 0, night: 0, eve: 0, morn: 0 },
+        pressure: 0,
+        humidity: day.humidity.length
+          ? day.humidity.reduce((a: number, b: number) => a + b, 0) /
+            day.humidity.length
+          : 0,
+        dew_point: 0,
+        wind_speed: 0,
+        wind_deg: 0,
+        weather: [day.weather],
+        clouds: 0,
+        pop: 0,
+        uvi: 0,
+      }))
+      .slice(0, 5); // Consolidate to top 5 days
+
+    return {
+      lat,
+      lon,
+      timezone: 'UTC', // 2.5 gives offset in seconds (current.timezone), mapping needed if strictly used
+      timezone_offset: current.timezone,
+      current: currentWeather,
+      daily: dailyList,
+      hourly: hourlyList,
+    };
   }
 }
