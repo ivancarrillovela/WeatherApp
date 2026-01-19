@@ -1,4 +1,3 @@
-```typescript
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -30,7 +29,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { sunny, navigate } from 'ionicons/icons';
 import { WeatherIconComponent } from 'src/app/components/atoms/weather-icon/weather-icon.component';
-import { HourlyBreakdownComponent } => 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
+import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
 import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
@@ -70,7 +69,7 @@ export class HomePage implements OnInit {
   weatherData: any;
   citySearch: string = '';
   currentLang: string = 'en';
-  
+
   // Autocomplete
   searchSubject = new Subject<string>();
   citySuggestions: any[] = [];
@@ -86,17 +85,19 @@ export class HomePage implements OnInit {
     this.loadWeather(40.4168, -3.7038); // Madrid default
 
     // Setup Autocomplete
-    this.searchSubject.pipe(
-      debounceTime(400),
-      distinctUntilChanged(),
-      switchMap(query => {
-        if (!query || query.length < 3) return [];
-        return this.weatherService.searchCities(query);
-      })
-    ).subscribe((results: any[]) => {
-      this.citySuggestions = results;
-      this.showSuggestions = results.length > 0;
-    });
+    this.searchSubject
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        switchMap((query) => {
+          if (!query || query.length < 3) return [];
+          return this.weatherService.searchCities(query);
+        }),
+      )
+      .subscribe((results: any[]) => {
+        this.citySuggestions = results;
+        this.showSuggestions = results.length > 0;
+      });
   }
 
   toggleLanguage() {
@@ -104,17 +105,46 @@ export class HomePage implements OnInit {
     this.translate.use(this.currentLang);
   }
 
-      // Default
-      this.weatherService.getWeather(51.5074, -0.1278).subscribe((data) => {
+  loadWeather(lat: number, lon: number) {
+    this.weatherService.getWeather(lat, lon).subscribe({
+      next: (data) => {
         this.weatherData = data;
-      });
+      },
+      error: (err) => console.error(err),
+    });
+  }
+
+  // Triggered by key input
+  onSearchInput(event: any) {
+    const query = event.target.value;
+    this.citySearch = query;
+    if (query && query.length >= 3) {
+      this.searchSubject.next(query);
+    } else {
+      this.citySuggestions = [];
+      this.showSuggestions = false;
     }
   }
 
+  // Select from dropdown
+  selectCity(city: any) {
+    this.citySearch = city.name;
+    this.showSuggestions = false;
+    this.citySuggestions = []; // Clear suggestions
+    this.loadWeather(city.lat, city.lon);
+  }
+
   searchCity() {
-    if (!this.citySearch) return;
-    this.weatherService.getWeatherByCity(this.citySearch).subscribe((data) => {
-      this.weatherData = data;
-    });
+    if (this.citySearch && this.citySearch.trim()) {
+      this.showSuggestions = false;
+      this.weatherService.getWeatherByCity(this.citySearch).subscribe({
+        next: (data) => {
+          this.weatherData = data;
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
+    }
   }
 }

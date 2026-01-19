@@ -5,6 +5,7 @@
     <ion-searchbar
       [(ngModel)]="citySearch"
       (search)="searchCity()"
+      (ionInput)="onSearchInput($event)"
       placeholder="Search city..."
       class="custom-searchbar"
     ></ion-searchbar>
