@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap, forkJoin, map } from 'rxjs';
+import { Observable, switchMap, forkJoin, map, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { CITIES } from '../constants/cities';
 
 @Injectable({
   providedIn: 'root',
@@ -19,11 +20,20 @@ export class WeatherService {
     );
   }
 
-  // Buscar ciudades (Autocomplete)
+  // Buscar ciudades (Autocomplete) - API
   searchCities(query: string): Observable<any[]> {
     return this.http.get<any[]>(
       `${this.geoUrl}?q=${query}&limit=5&appid=${this.apiKey}`,
     );
+  }
+
+  // Buscar ciudades (Autocomplete) - LOCAL
+  searchLocalCities(query: string): any[] {
+    if (!query || query.length < 2) return [];
+    const lowerQuery = query.toLowerCase();
+    return CITIES.filter((city) =>
+      city.name.toLowerCase().startsWith(lowerQuery),
+    ).slice(0, 5); // Limit local results
   }
 
   // Get Current Weather (API 2.5)

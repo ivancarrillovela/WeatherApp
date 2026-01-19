@@ -94,9 +94,22 @@ export class HomePage implements OnInit {
           return this.weatherService.searchCities(query);
         }),
       )
-      .subscribe((results: any[]) => {
-        this.citySuggestions = results;
-        this.showSuggestions = results.length > 0;
+      .subscribe((apiResults: any[]) => {
+        // Merge with local results
+        const query = this.citySearch;
+        const localResults = this.weatherService.searchLocalCities(query);
+
+        // Filter out duplicates from API
+        const filteredApi = apiResults.filter(
+          (apiCity) =>
+            !localResults.some(
+              (local) =>
+                local.name.toLowerCase() === apiCity.name.toLowerCase(),
+            ),
+        );
+
+        this.citySuggestions = [...localResults, ...filteredApi];
+        this.showSuggestions = this.citySuggestions.length > 0;
       });
   }
 
@@ -118,8 +131,16 @@ export class HomePage implements OnInit {
   onSearchInput(event: any) {
     const query = event.target.value;
     this.citySearch = query;
-    if (query && query.length >= 3) {
-      this.searchSubject.next(query);
+    if (query && query.length >= 2) {
+      // 1. Instant Local Search
+      const localResults = this.weatherService.searchLocalCities(query);
+      this.citySuggestions = localResults;
+      this.showSuggestions = localResults.length > 0;
+
+      // 2. Trigger API Search (Debounced)
+      if (query.length >= 3) {
+        this.searchSubject.next(query);
+      }
     } else {
       this.citySuggestions = [];
       this.showSuggestions = false;
