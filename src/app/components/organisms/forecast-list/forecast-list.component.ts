@@ -1,47 +1,95 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  IonItem,
-  IonLabel,
-  IonAccordionGroup,
-  IonAccordion,
-} from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.component';
 
 @Component({
   selector: 'app-forecast-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    IonItem,
-    IonLabel,
-    IonAccordionGroup,
-    IonAccordion,
-    TranslateModule,
-  ],
+  imports: [CommonModule, IonicModule, TranslateModule, WeatherIconComponent],
   template: `
-    <ion-accordion-group>
+    <div class="forecast-container glass-card">
       @for (day of dailyForecast; track day.dt) {
-        <ion-accordion [value]="day.dt">
-          <ion-item slot="header" color="light">
-            <ion-label>
-              <h2>{{ day.dt * 1000 | date: 'EEEE' }}</h2>
-              <p>{{ day.weather[0].description }}</p>
-            </ion-label>
-            <div slot="end">
-              {{ day.temp.max | number: '1.0-0' }}° /
-              {{ day.temp.min | number: '1.0-0' }}°
-            </div>
-          </ion-item>
-          <div slot="content" class="ion-padding">
-            <p>{{ 'WEATHER.UV' | translate }}: {{ day.uvi }}</p>
-            <p>{{ 'WEATHER.RAIN' | translate }}: {{ day.rain || 0 }}mm</p>
-            <p>{{ 'WEATHER.HUMIDITY' | translate }}: {{ day.humidity }}%</p>
+        <div class="forecast-row">
+          <div class="day-name">
+            {{ day.dt * 1000 | date: 'EEEE' }}
           </div>
-        </ion-accordion>
+
+          <div class="condition">
+            <app-weather-icon
+              [iconCode]="day.weather[0].icon"
+              style="font-size: 1.5rem; vertical-align: middle;"
+            ></app-weather-icon>
+            <span class="precip" *ngIf="day.pop > 0"
+              >{{ day.pop * 100 | number: '1.0-0' }}%</span
+            >
+          </div>
+
+          <div class="temps">
+            <span class="high">{{ day.temp.max | number: '1.0-0' }}°</span>
+            <span class="low">{{ day.temp.min | number: '1.0-0' }}°</span>
+          </div>
+        </div>
       }
-    </ion-accordion-group>
+    </div>
   `,
+  styles: [
+    `
+      .forecast-container {
+        padding: 10px 20px;
+        /* Reuse glass-card but maybe less padding or specific adjustments */
+      }
+
+      .forecast-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .day-name {
+          flex: 1;
+          font-weight: 500;
+          font-size: 1rem;
+        }
+
+        .condition {
+          flex: 1;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+
+          .precip {
+            font-size: 0.75rem;
+            color: #90cdf4; /* Light blue for rain */
+          }
+        }
+
+        .temps {
+          flex: 1;
+          text-align: right;
+
+          .high {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-right: 10px;
+          }
+          .low {
+            font-weight: 400;
+            opacity: 0.6;
+            font-size: 1rem;
+          }
+        }
+      }
+    `,
+  ],
 })
 export class ForecastListComponent {
   @Input() dailyForecast: any[] = [];
