@@ -1,9 +1,11 @@
 {
-    "HOME": {
-        "HELLO": "Hello"
-    },
-    "WEATHER": {
-        "WIND": "Wind",
-        "HUMIDITY": "Humidity"
-    }
+  "HOME": {
+    "HELLO": "Hello"
+  },
+  "WEATHER": {
+    "WIND": "Wind",
+    "HUMIDITY": "Humidity",
+    "UV": "UV Index",
+    "RAIN": "Precipitation"
+  }
 }
