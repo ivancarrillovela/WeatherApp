@@ -1,27 +1,131 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+/* Search Bar Customization */
+.custom-searchbar {
+  --background: rgba(255, 255, 255, 0.15);
+  --color: white;
+  --placeholder-color: #ddd;
+  --icon-color: #ddd;
+  --border-radius: 20px;
+  --box-shadow: none;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.main-container {
+    padding-bottom: 50px;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+/* Hero Section */
+.hero-section {
+    margin-bottom: 30px;
+    margin-top: 20px;
+    
+    .city-name {
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+        font-weight: 300;
+        margin-bottom: 0;
+        text-transform: uppercase;
+    }
 
-  color: #8c8c8c;
+    .temperature-container {
+        position: relative;
+        display: inline-block;
+        
+        .main-temp {
+            font-size: 6rem;
+            font-weight: 100; /* Ultra thin */
+            margin: 0;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+    }
 
-  margin: 0;
+    .condition-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 5px;
+
+        .condition-text {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+    }
+
+    .high-low {
+        font-size: 1rem;
+        opacity: 0.7;
+    }
 }
 
-#container a {
-  text-decoration: none;
+/* Detail Cards (UV, Wind) */
+.detail-card {
+    padding: 15px;
+    height: 160px; /* Fixed height for consistency */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        opacity: 0.7;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .card-value {
+        font-size: 2.5rem;
+        font-weight: 400;
+        
+        .badge {
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            vertical-align: middle;
+            margin-left: 5px;
+            
+            &.high { background: var(--ion-color-primary); color: white; }
+            &.low { background: #48bb78; color: white; }
+        }
+    }
+}
+
+/* Wind Widget Customization */
+.wind-circle {
+    text-align: center;
+    position: relative;
+    padding-top: 10px;
+
+    .arrow {
+        font-size: 2rem;
+        color: var(--ion-color-tertiary);
+        display: inline-block;
+        margin-bottom: 5px;
+    }
+    .speed {
+        font-size: 1.2rem;
+        font-weight: bold;
+        .unit { font-size: 0.8rem; font-weight: normal; opacity: 0.7; }
+    }
+    .direction {
+        font-size: 0.7rem;
+        opacity: 0.6;
+    }
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+    margin-top: 20px;
+    padding-left: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
