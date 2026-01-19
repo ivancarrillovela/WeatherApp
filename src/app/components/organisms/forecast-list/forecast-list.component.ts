@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  IonList,
   IonItem,
   IonLabel,
   IonAccordionGroup,
@@ -14,7 +13,6 @@ import { TranslateModule } from '@ngx-translate/core';
   standalone: true,
   imports: [
     CommonModule,
-    IonList,
     IonItem,
     IonLabel,
     IonAccordionGroup,

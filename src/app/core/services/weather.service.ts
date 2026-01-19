@@ -1,15 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WeatherService {
   private http = inject(HttpClient);
-  private apiKey = '3db226885a5bc87c3eda44bb9b3a1209';
-  private baseUrl = 'https://api.openweathermap.org/data/3.0/onecall';
-  private geoUrl = 'http://api.openweathermap.org/geo/1.0/direct';
+  private apiKey = environment.openWeather.apiKey;
+  private baseUrl = environment.openWeather.baseUrl;
+  private geoUrl = environment.openWeather.geoUrl;
 
   // Obtener coordenadas por nombre de ciudad
   getCoordinates(city: string): Observable<any> {
