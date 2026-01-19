@@ -1,0 +1,9 @@
+{
+    "HOME": {
+        "HELLO": "Hello"
+    },
+    "WEATHER": {
+        "WIND": "Wind",
+        "HUMIDITY": "Humidity"
+    }
+}
