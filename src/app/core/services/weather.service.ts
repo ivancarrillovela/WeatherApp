@@ -19,6 +19,13 @@ export class WeatherService {
     );
   }
 
+  // Buscar ciudades (Autocomplete)
+  searchCities(query: string): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.geoUrl}?q=${query}&limit=5&appid=${this.apiKey}`,
+    );
+  }
+
   // Get Current Weather (API 2.5)
   getCurrentWeather(lat: number, lon: number): Observable<any> {
     return this.http.get(

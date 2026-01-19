@@ -1,12 +1,38 @@
+```typescript
 import { Component, inject, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WeatherService } from '../../core/services/weather.service'; // Adjusted path
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { ForecastListComponent } from '../../components/organisms/forecast-list/forecast-list.component';
-import { WeatherIconComponent } from '../../components/atoms/weather-icon/weather-icon.component';
-import { HourlyBreakdownComponent } from '../../components/molecules/hourly-breakdown/hourly-breakdown.component';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonSearchbar,
+  IonCard,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonCardContent,
+  IonSpinner,
+  IonButton,
+  IonIcon,
+  IonButtons,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonProgressBar,
+  IonList,
+  IonItem,
+  IonLabel,
+} from '@ionic/angular/standalone';
+import { WeatherService } from 'src/app/core/services/weather.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { sunny, navigate } from 'ionicons/icons';
+import { WeatherIconComponent } from 'src/app/components/atoms/weather-icon/weather-icon.component';
+import { HourlyBreakdownComponent } => 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
+import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
+import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -14,26 +40,63 @@ import { HourlyBreakdownComponent } from '../../components/molecules/hourly-brea
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
-    IonicModule,
     CommonModule,
     FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonContent,
+    IonSearchbar,
+    IonSpinner,
+    IonButton,
+    IonIcon,
+    IonButtons,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonProgressBar,
+    IonList,
+    IonItem,
+    IonLabel,
     TranslateModule,
-    ForecastListComponent,
     WeatherIconComponent,
     HourlyBreakdownComponent,
+    ForecastListComponent,
   ],
 })
 export class HomePage implements OnInit {
   private weatherService = inject(WeatherService);
   private translate = inject(TranslateService);
 
-  weatherData: any = null;
-  currentLang = 'en';
-  citySearch = '';
+  weatherData: any;
+  citySearch: string = '';
+  currentLang: string = 'en';
+  
+  // Autocomplete
+  searchSubject = new Subject<string>();
+  citySuggestions: any[] = [];
+  showSuggestions: boolean = false;
+
+  constructor() {
+    this.translate.setDefaultLang('en');
+    this.translate.use('en');
+    addIcons({ sunny, navigate });
+  }
 
   ngOnInit() {
-    this.translate.setDefaultLang('en');
-    this.loadCurrentLocation();
+    this.loadWeather(40.4168, -3.7038); // Madrid default
+
+    // Setup Autocomplete
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query || query.length < 3) return [];
+        return this.weatherService.searchCities(query);
+      })
+    ).subscribe((results: any[]) => {
+      this.citySuggestions = results;
+      this.showSuggestions = results.length > 0;
+    });
   }
 
   toggleLanguage() {
@@ -41,26 +104,6 @@ export class HomePage implements OnInit {
     this.translate.use(this.currentLang);
   }
 
-  loadCurrentLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          this.weatherService
-            .getWeather(latitude, longitude)
-            .subscribe((data) => {
-              this.weatherData = data;
-            });
-        },
-        (err) => {
-          console.error('Geolocation error', err);
-          // Default to London if geo fails or denied
-          this.weatherService.getWeather(51.5074, -0.1278).subscribe((data) => {
-            this.weatherData = data;
-          });
-        },
-      );
-    } else {
       // Default
       this.weatherService.getWeather(51.5074, -0.1278).subscribe((data) => {
         this.weatherData = data;

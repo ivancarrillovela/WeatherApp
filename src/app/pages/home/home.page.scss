@@ -10,8 +10,51 @@
   padding-right: 10px;
 }
 
+/* Autocomplete Suggestions */
+.suggestions-container {
+    position: absolute;
+    top: 60px; /* Below toolbar */
+    left: 10px;
+    right: 10px;
+    z-index: 9999;
+}
+
+.glass-list {
+    background: rgba(30, 40, 60, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+    
+    ion-item {
+        --background: transparent;
+        --color: white;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        
+        &:last-child {
+            border-bottom: none;
+        }
+
+        h3 {
+            font-weight: 600;
+        }
+        p {
+            opacity: 0.7;
+            font-size: 0.85rem;
+        }
+    }
+}
+
+
 .main-container {
     padding-bottom: 50px;
+    
+    /* DESKTOP LAYOUT LIMITER */
+    @media (min-width: 768px) {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-top: 40px;
+    }
 }
 
 /* Hero Section */
@@ -128,4 +171,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+/* DESKTOP SPECIFIC ADJUSTMENTS */
+@media (min-width: 768px) {
+    .desktop-split {
+        align-items: start; /* Align tops */
+    }
+
+    .hero-section {
+        text-align: left !important; /* Move hero to left */
+        margin-top: 0;
+        
+        .condition-container {
+            justify-content: flex-start; /* Align condition left */
+        }
+    }
+    
+    .left-col {
+        position: sticky;
+        top: 20px; /* Sticky sidebar effect on really tall screens */
+    }
 }

@@ -17,110 +17,142 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  @if (weatherData) {
+  <!-- Suggestions Dropdown (Floating) -->
+  @if (showSuggestions && citySuggestions.length > 0) {
+  <div class="suggestions-container">
+    <ion-list lines="none" class="glass-list">
+      @for (city of citySuggestions; track city.lat) {
+      <ion-item button (click)="selectCity(city)" detail="false">
+        <ion-label>
+          <h3>{{ city.name }}</h3>
+          <p>{{ city.state ? city.state + ', ' : '' }}{{ city.country }}</p>
+        </ion-label>
+      </ion-item>
+      }
+    </ion-list>
+  </div>
+  } @if (weatherData) {
   <div class="main-container ion-padding">
-    <!-- HERO SECTION -->
-    <div class="hero-section ion-text-center">
-      <h2 class="city-name">
-        {{ weatherData.current.name || (citySearch | uppercase) }}
-      </h2>
-      <!-- fallback name if not in current data -->
-
-      <div class="temperature-container">
-        <h1 class="main-temp">
-          {{ weatherData.current.temp | number:'1.0-0' }}°
-        </h1>
-      </div>
-
-      <div class="condition-container">
-        <app-weather-icon
-          [iconCode]="weatherData.current.weather[0].icon"
-          style="font-size: 24px"
-        ></app-weather-icon>
-        <span class="condition-text"
-          >{{ weatherData.current.weather[0].description | titlecase }}</span
-        >
-      </div>
-
-      <div class="high-low">
-        H: {{ weatherData.daily[0].temp.max | number:'1.0-0' }}° | L: {{
-        weatherData.daily[0].temp.min | number:'1.0-0' }}°
-      </div>
-    </div>
-
-    <!-- DETAILS GRID -->
-    <ion-grid class="ion-no-padding ion-margin-top api-details">
-      <ion-row>
-        <ion-col size="6" class="ion-padding-end">
-          <div class="glass-card detail-card">
-            <div class="card-header">
-              <ion-icon name="sunny" color="warning"></ion-icon>
-              <span>UV INDEX</span>
+    <ion-grid>
+      <ion-row class="desktop-split">
+        <!-- LEFT COLUMN: Hero & Current Details (Center/Left on Desktop) -->
+        <ion-col size-xs="12" size-md="5" size-lg="5" class="left-col">
+          <!-- HERO SECTION -->
+          <div class="hero-section ion-text-center">
+            <h2 class="city-name">
+              {{ weatherData.current.name || (citySearch | uppercase) }}
+            </h2>
+            <div class="temperature-container">
+              <h1 class="main-temp">
+                {{ weatherData.current.temp | number:'1.0-0' }}°
+              </h1>
             </div>
-            <div class="card-value">
-              {{ weatherData.current.uvi }}
-              <span
-                class="badge"
-                [ngClass]="{'high': weatherData.current.uvi > 5, 'low': weatherData.current.uvi <= 5}"
+
+            <div class="condition-container">
+              <app-weather-icon
+                [iconCode]="weatherData.current.weather[0].icon"
+                style="font-size: 24px"
+              ></app-weather-icon>
+              <span class="condition-text"
+                >{{ weatherData.current.weather[0].description | titlecase
+                }}</span
               >
-                {{ weatherData.current.uvi > 5 ? 'High' : 'Low' }}
-              </span>
             </div>
-            <ion-progress-bar
-              [value]="weatherData.current.uvi / 11"
-              color="warning"
-            ></ion-progress-bar>
+
+            <div class="high-low">
+              H: {{ weatherData.daily[0].temp.max | number:'1.0-0' }}° | L: {{
+              weatherData.daily[0].temp.min | number:'1.0-0' }}°
+            </div>
           </div>
+
+          <!-- DETAILS GRID -->
+          <ion-grid class="ion-no-padding ion-margin-top api-details">
+            <ion-row>
+              <ion-col size="6" class="ion-padding-end">
+                <div class="glass-card detail-card">
+                  <div class="card-header">
+                    <ion-icon name="sunny" color="warning"></ion-icon>
+                    <span>UV INDEX</span>
+                  </div>
+                  <div class="card-value">
+                    {{ weatherData.current.uvi }}
+                    <span
+                      class="badge"
+                      [ngClass]="{'high': weatherData.current.uvi > 5, 'low': weatherData.current.uvi <= 5}"
+                    >
+                      {{ weatherData.current.uvi > 5 ? 'High' : 'Low' }}
+                    </span>
+                  </div>
+                  <ion-progress-bar
+                    [value]="weatherData.current.uvi / 11"
+                    color="warning"
+                  ></ion-progress-bar>
+                </div>
+              </ion-col>
+              <ion-col size="6" class="ion-padding-start">
+                <div class="glass-card detail-card">
+                  <div class="card-header">
+                    <ion-icon name="navigate" color="tertiary"></ion-icon>
+                    <span>WIND</span>
+                  </div>
+                  <div class="wind-circle">
+                    <div
+                      class="arrow"
+                      [style.transform]="'rotate(' + weatherData.current.wind_deg + 'deg)'"
+                    >
+                      ➤
+                    </div>
+                    <div class="speed">
+                      {{ weatherData.current.wind_speed | number:'1.0-0' }}<span
+                        class="unit"
+                        >mph</span
+                      >
+                    </div>
+                    <div class="direction">North West</div>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
         </ion-col>
-        <ion-col size="6" class="ion-padding-start">
-          <div class="glass-card detail-card">
-            <div class="card-header">
-              <ion-icon name="navigate" color="tertiary"></ion-icon>
-              <span>WIND</span>
-            </div>
-            <div class="wind-circle">
-              <div
-                class="arrow"
-                [style.transform]="'rotate(' + weatherData.current.wind_deg + 'deg)'"
-              >
-                ➤
-              </div>
-              <div class="speed">
-                {{ weatherData.current.wind_speed | number:'1.0-0' }}<span
-                  class="unit"
-                  >mph</span
-                >
-              </div>
-              <div class="direction">North West</div>
-              <!-- Mock direction text for now, or calc from deg -->
-            </div>
+
+        <!-- RIGHT COLUMN: Timeline & Forecast (Right on Desktop) -->
+        <ion-col
+          size-xs="12"
+          size-md="7"
+          size-lg="6"
+          offset-lg="1"
+          class="right-col"
+        >
+          <!-- SECTIONS -->
+          <div class="section-title">
+            <span>Timeline</span>
+            <span
+              class="link"
+              style="
+                float: right;
+                font-size: 0.8rem;
+                color: var(--ion-color-primary);
+              "
+              >5 Days →</span
+            >
           </div>
+
+          <!-- HOURLY -->
+          <app-hourly-breakdown
+            [hourlyForecast]="weatherData.hourly | slice:0:12"
+          ></app-hourly-breakdown>
+
+          <div class="section-title ion-margin-top">
+            <span>5-Day Forecast</span>
+          </div>
+
+          <app-forecast-list
+            [dailyForecast]="weatherData.daily | slice:0:5"
+          ></app-forecast-list>
         </ion-col>
       </ion-row>
     </ion-grid>
-
-    <!-- SECTIONS -->
-    <div class="section-title">
-      <span>Timeline</span>
-      <span
-        class="link"
-        style="float: right; font-size: 0.8rem; color: var(--ion-color-primary)"
-        >5 Days →</span
-      >
-    </div>
-
-    <!-- HOURLY (Horizontal Scroll handled by component styles) -->
-    <app-hourly-breakdown
-      [hourlyForecast]="weatherData.hourly | slice:0:12"
-    ></app-hourly-breakdown>
-
-    <div class="section-title ion-margin-top">
-      <span>5-Day Forecast</span>
-    </div>
-
-    <app-forecast-list
-      [dailyForecast]="weatherData.daily | slice:0:5"
-    ></app-forecast-list>
   </div>
   } @else {
   <div
