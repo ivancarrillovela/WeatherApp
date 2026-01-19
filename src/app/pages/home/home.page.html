@@ -1,20 +1,50 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-searchbar
+      [(ngModel)]="citySearch"
+      (search)="searchCity()"
+      placeholder="Search city..."
+    ></ion-searchbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleLanguage()"
+        >{{ currentLang | uppercase }}</ion-button
+      >
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+<ion-content>
+  @if (weatherData) {
+  <div class="main-card ion-text-center ion-padding">
+    <ion-label>
+      <h1>{{ weatherData.current.temp | number:'1.0-0' }}°</h1>
+      <app-weather-icon
+        [iconCode]="weatherData.current.weather[0].icon"
+      ></app-weather-icon>
+      <h2>{{ weatherData.current.weather[0].description }}</h2>
+    </ion-label>
+    <p>{{ 'WEATHER.UV' | translate }}: {{ weatherData.current.uvi }}</p>
+    <p>
+      {{ 'WEATHER.WIND' | translate }}: {{ weatherData.current.wind_speed }} mph
+    </p>
   </div>
+
+  @if (weatherData.hourly) {
+  <h3 class="ion-padding-start">Hourly Forecast</h3>
+  <app-hourly-breakdown
+    [hourlyForecast]="weatherData.hourly | slice:0:12"
+  ></app-hourly-breakdown>
+  }
+
+  <h3 class="ion-padding-start">5-Day Forecast</h3>
+  <app-forecast-list
+    [dailyForecast]="weatherData.daily | slice:0:5"
+  ></app-forecast-list>
+
+  } @else {
+  <div class="ion-text-center ion-padding">
+    <p>Loading weather...</p>
+    <ion-spinner></ion-spinner>
+  </div>
+  }
 </ion-content>
