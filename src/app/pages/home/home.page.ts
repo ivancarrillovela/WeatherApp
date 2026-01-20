@@ -187,15 +187,6 @@ export class HomePage implements OnInit {
       .subscribe({
         next: (data) => {
           this.weatherData = data;
-
-          // Auto-switch language based on country (ES -> Spanish, Others -> English)
-          // Only if language implies a change to avoid loops/redundant calls
-          const country = this.weatherData.current.country;
-          if (country === 'ES' && this.currentLang !== 'es') {
-            this.settingsService.setLanguage('es');
-          } else if (country !== 'ES' && this.currentLang !== 'en') {
-            this.settingsService.setLanguage('en');
-          }
         },
         error: (err) => console.error(err),
       });
