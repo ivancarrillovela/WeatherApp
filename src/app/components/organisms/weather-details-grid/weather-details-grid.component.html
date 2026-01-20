@@ -8,28 +8,23 @@
         [iconColor]="getUVColor(current.uvi)"
       >
         <div class="full-width">
-          <div class="flex-between-center">
-            <span>
-              {{
-                current.uvi !== null ? (current.uvi | number: "1.0-0") : "N/A"
-              }}
-            </span>
-            @if (current.uvi !== null) {
+          @if (current.uvi !== null) {
+            <div class="flex-between-center">
+              <span>{{ current.uvi | number: "1.0-0" }}</span>
               <app-status-badge [colorClass]="getUVClass(current.uvi)">
                 {{
                   "WEATHER.UV_LEVEL." + getUVClass(current.uvi).toUpperCase()
                     | translate
                 }}
               </app-status-badge>
-            }
-            @if (current.uvi === null) {
-              <app-status-badge colorClass="low">N/A</app-status-badge>
-            }
-          </div>
-          <ion-progress-bar
-            [value]="(current.uvi || 0) / 11"
-            [color]="getUVColor(current.uvi)"
-          ></ion-progress-bar>
+            </div>
+            <ion-progress-bar
+              [value]="current.uvi / 11"
+              [color]="getUVColor(current.uvi)"
+            ></ion-progress-bar>
+          } @else {
+            <span class="na-text">N/A</span>
+          }
         </div>
       </app-weather-detail-card>
     </ion-col>
