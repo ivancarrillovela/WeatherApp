@@ -125,18 +125,36 @@ export class HomePage implements OnInit {
       .subscribe((apiResults: any[]) => {
         // Merge with local results
         const query = this.citySearch;
-        const localResults = this.weatherService.searchLocalCities(query);
+        const rawLocalResults = this.weatherService.searchLocalCities(query);
 
-        // Filter out duplicates from API
-        const filteredApi = apiResults.filter(
-          (apiCity) =>
-            !localResults.some(
-              (local) =>
-                local.name.toLowerCase() === apiCity.name.toLowerCase(),
-            ),
-        );
+        // Localize Local Results
+        const localResults = rawLocalResults.map((city) => {
+          const localName =
+            city.local_names && city.local_names[this.currentLang]
+              ? city.local_names[this.currentLang]
+              : city.name;
+          return { ...city, name: localName };
+        });
 
-        this.citySuggestions = [...localResults, ...filteredApi];
+        // Filter out duplicates from API & Localize Names
+        const processedApi = apiResults
+          .filter(
+            (apiCity) =>
+              !localResults.some(
+                (local) =>
+                  local.name.toLowerCase() === apiCity.name.toLowerCase(),
+              ),
+          )
+          .map((city) => {
+            // Check for localized name in current language
+            const localName =
+              city.local_names && city.local_names[this.currentLang]
+                ? city.local_names[this.currentLang]
+                : city.name;
+            return { ...city, name: localName };
+          });
+
+        this.citySuggestions = [...localResults, ...processedApi];
         this.showSuggestions = this.citySuggestions.length > 0;
       });
   }
@@ -189,7 +207,14 @@ export class HomePage implements OnInit {
     this.citySearch = query;
     if (query && query.length >= 2) {
       // 1. Instant Local Search
-      const localResults = this.weatherService.searchLocalCities(query);
+      const rawLocalResults = this.weatherService.searchLocalCities(query);
+      const localResults = rawLocalResults.map((city) => {
+        const localName =
+          city.local_names && city.local_names[this.currentLang]
+            ? city.local_names[this.currentLang]
+            : city.name;
+        return { ...city, name: localName };
+      });
       this.citySuggestions = localResults;
       this.showSuggestions = localResults.length > 0;
 
