@@ -92,7 +92,8 @@
             </div>
 
             <div class="high-low">
-              H: {{ weatherData.daily[0].temp.max | number:'1.0-0' }}° | L: {{
+              {{ 'WEATHER.HIGH' | translate }}: {{ weatherData.daily[0].temp.max
+              | number:'1.0-0' }}° | {{ 'WEATHER.LOW' | translate }}: {{
               weatherData.daily[0].temp.min | number:'1.0-0' }}°
             </div>
           </div>
