@@ -26,8 +26,16 @@ import {
 } from '@ionic/angular/standalone';
 import { WeatherService } from 'src/app/core/services/weather.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  sunny,
+  navigate,
+  locate,
+  water,
+  eye,
+  moon,
+  rainy,
+} from 'ionicons/icons';
 import { addIcons } from 'ionicons';
-import { sunny, navigate, locate } from 'ionicons/icons';
 import { WeatherIconComponent } from 'src/app/components/atoms/weather-icon/weather-icon.component';
 import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
 import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
@@ -85,7 +93,7 @@ export class HomePage implements OnInit {
   showSuggestions: boolean = false;
 
   constructor() {
-    addIcons({ sunny, navigate, locate });
+    addIcons({ sunny, navigate, locate, water, eye, moon, rainy });
   }
 
   ngOnInit() {
@@ -257,6 +265,17 @@ export class HomePage implements OnInit {
     if (uv <= 5) return 'warning'; // Yellow
     if (uv <= 7) return 'warning'; // Orange-ish (Ionic warning is yellow/orange)
     return 'danger'; // Red
+  }
+
+  // Ayudante para Visibilidad
+  getVisibility(meters: number): string {
+    if (this.currentUnit === 'imperial') {
+      const miles = meters / 1609.34;
+      return `${miles.toFixed(1)} mi`;
+    } else {
+      const km = meters / 1000;
+      return `${km.toFixed(1)} km`;
+    }
   }
 
   // Ayudante para UI de Nivel de Viento

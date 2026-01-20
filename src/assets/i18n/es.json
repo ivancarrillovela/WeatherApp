@@ -17,6 +17,10 @@
       "MODERATE": "Moderado",
       "STRONG": "Fuerte",
       "VERY_STRONG": "Muy Fuerte"
-    }
+    },
+    "HUMIDITY": "Humedad",
+    "VISIBILITY": "Visibilidad",
+    "SUNSET": "Puesta de sol",
+    "PRECIPITATION": "Precipitaciones"
   }
 }

@@ -171,6 +171,35 @@
                 </div>
               </ion-col>
             </ion-row>
+
+            <!-- EXTRA ROW: Humidity & Visibility -->
+            <ion-row class="ion-margin-top">
+              <ion-col size="6" class="ion-padding-end">
+                <div class="glass-card detail-card">
+                  <div class="card-header">
+                    <ion-icon name="rainy" color="primary"></ion-icon>
+                    <span>{{ 'WEATHER.PRECIPITATION' | translate }}</span>
+                  </div>
+                  <div class="card-value">
+                    {{ (weatherData.hourly[0].pop * 100) | number:'1.0-0' }}
+                    <span style="font-size: 1rem; opacity: 0.7">%</span>
+                  </div>
+                  <div style="height: 4px"></div>
+                </div>
+              </ion-col>
+              <ion-col size="6" class="ion-padding-start">
+                <div class="glass-card detail-card">
+                  <div class="card-header">
+                    <ion-icon name="moon" color="warning"></ion-icon>
+                    <span>{{ 'WEATHER.SUNSET' | translate }}</span>
+                  </div>
+                  <div class="card-value">
+                    {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
+                  </div>
+                  <div style="height: 4px"></div>
+                </div>
+              </ion-col>
+            </ion-row>
           </ion-grid>
         </ion-col>
 
