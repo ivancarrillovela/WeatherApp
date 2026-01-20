@@ -107,7 +107,7 @@
                     <span>{{ 'WEATHER.UV' | translate }}</span>
                   </div>
                   <div class="card-value">
-                    {{ weatherData.current.uvi ? weatherData.current.uvi : '-' }}
+                    {{ weatherData.current.uvi ? weatherData.current.uvi : '' }}
                     <span
                       class="badge"
                       [ngClass]="{'high': weatherData.current.uvi > 5, 'low': weatherData.current.uvi <= 5}"
@@ -116,8 +116,9 @@
                       {{ (weatherData.current.uvi > 5 ? 'WEATHER.HIGH' :
                       'WEATHER.LOW') | translate }}
                     </span>
-                    <span class="badge low" *ngIf="!weatherData.current.uvi">N/A</span>
-                  </div>
+                    <span class="badge low" *ngIf="!weatherData.current.uvi"
+                      >N/A</span
+                    >
                   </div>
                   <ion-progress-bar
                     [value]="weatherData.current.uvi / 11"

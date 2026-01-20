@@ -67,6 +67,13 @@ export class WeatherService {
     );
   }
 
+  // Get UV Index (Legacy API for Standard Plan)
+  getUVIndex(lat: number, lon: number): Observable<any> {
+    return this.http.get(
+      `${this.baseUrl}/uvi?lat=${lat}&lon=${lon}&appid=${this.apiKey}`,
+    );
+  }
+
   // Unified method to get full weather data by coordinates (mimics OneCall)
   getWeather(
     lat: number,
@@ -77,25 +84,19 @@ export class WeatherService {
     return forkJoin({
       current: this.getCurrentWeather(lat, lon, units, lang),
       forecast: this.getForecast(lat, lon, units, lang),
+      uv: this.getUVIndex(lat, lon).pipe(catchError(() => of({ value: 0 }))), // Catch errors, default to 0
       geo: this.reverseGeocode(lat, lon).pipe(
         // Fail gracefully if reverse geo fails
-        // Use 'catchError' from rxjs/operators (needs import? 'of' is already imported)
-        // Actually, let's map error to empty array
         switchMap((res) => of(res)),
-        // Wait, catchError is better. import { catchError } from 'rxjs/operators' might be needed if not in 'rxjs'
-        // 'rxjs' main export has 'catchError'? No, usually 'rxjs/operators'
-        // Check imports first.
+        catchError(() => of([])),
       ),
     }).pipe(
-      map(({ current, forecast, geo }) => {
-        // Use the name from reverse geocoding if available, as it is more precise (e.g., Pamplona vs Navarre)
+      map(({ current, forecast, uv, geo }) => {
+        // Use the name from reverse geocoding if available, as it is more precise
         let exactName = current.name;
         if (geo && geo.length > 0) {
           const location = geo[0];
-          // Prefer localized name if available in the requested language
-          // Note: 'lang' param in reverse API only affects response if supported, but here we can check local_names
-          // However, the reverse API called above doesn't have &lang= param mapped yet,
-          // but the 'local_names' object allows client-side selection.
+          // Prefer localized name
           if (location.local_names && location.local_names[lang]) {
             exactName = location.local_names[lang];
           } else {
@@ -110,6 +111,7 @@ export class WeatherService {
           lon,
           currentWithPreciseName,
           forecast,
+          uv.value, // Pass UV value
         );
       }),
     );
@@ -128,9 +130,12 @@ export class WeatherService {
           return forkJoin({
             current: this.getCurrentWeather(lat, lon, units, lang),
             forecast: this.getForecast(lat, lon, units, lang),
+            uv: this.getUVIndex(lat, lon).pipe(
+              catchError(() => of({ value: 0 })),
+            ),
           }).pipe(
-            map(({ current, forecast }) =>
-              this.mapToWeatherData(lat, lon, current, forecast),
+            map(({ current, forecast, uv }) =>
+              this.mapToWeatherData(lat, lon, current, forecast, uv.value),
             ),
           );
         } else {
@@ -145,6 +150,7 @@ export class WeatherService {
     lon: number,
     current: any,
     forecast: any,
+    uvValue: number = 0, // Add UV parameter
   ): any {
     // Current Weather
     const currentWeather = {
@@ -158,7 +164,7 @@ export class WeatherService {
       pressure: current.main.pressure,
       humidity: current.main.humidity,
       dew_point: 0, // Not available in 2.5 directly
-      uvi: 0, // Not available in 2.5 standard
+      uvi: uvValue, // Use real UV value
       clouds: current.clouds.all,
       visibility: current.visibility,
       wind_speed: current.wind.speed,
