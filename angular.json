@@ -23,9 +23,7 @@
               "browser": ""
             },
             "index": "src/index.html",
-            "polyfills": [
-              "src/polyfills.ts"
-            ],
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -36,6 +34,12 @@
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/theme"],
+              "sass": {
+                "silenceDeprecations": ["legacy-js-api", "import"]
+              }
+            },
             "scripts": [],
             "browser": "src/main.ts"
           },
