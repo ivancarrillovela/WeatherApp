@@ -48,18 +48,18 @@
           class="right-col"
         >
           <!-- SECTIONS -->
-          <div class="section-title">
+          <app-section-title>
             <span>{{ 'HOME.TIMELINE' | translate }}</span>
-          </div>
+          </app-section-title>
 
           <!-- HOURLY -->
           <app-hourly-breakdown
             [hourlyForecast]="weatherData.hourly | slice:0:8"
           ></app-hourly-breakdown>
 
-          <div class="section-title ion-margin-top">
+          <app-section-title>
             <span>{{ 'HOME.FORECAST_TITLE' | translate }}</span>
-          </div>
+          </app-section-title>
 
           <app-forecast-list
             [dailyForecast]="weatherData.daily | slice:0:5"

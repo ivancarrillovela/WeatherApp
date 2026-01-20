@@ -1,0 +1,31 @@
+<div class="forecast-row" [class.active]="isActive" (click)="onSelect()">
+  <div class="day-name">
+    {{ day.dt * 1000 | date: "EEEE" : undefined : currentLang }}
+  </div>
+
+  <div class="condition-col">
+    <app-weather-icon
+      [iconCode]="day.weather[0].icon"
+      class="forecast-icon"
+    ></app-weather-icon>
+
+    <div class="meta-row">
+      <!-- Precipitación -->
+      <div class="meta-item" [class.faded-precip]="day.pop <= 0">
+        <ion-icon name="water" class="rain-icon"></ion-icon>
+        <span>{{ day.pop * 100 | number: "1.0-0" }}%</span>
+      </div>
+
+      <!-- Viento -->
+      <div class="meta-item">
+        <ion-icon name="navigate" class="wind-icon"></ion-icon>
+        <span>{{ day.wind_speed | number: "1.0-0" }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="temps">
+    <span class="high">{{ day.temp.max | number: "1.0-0" }}°</span>
+    <span class="low">{{ day.temp.min | number: "1.0-0" }}°</span>
+  </div>
+</div>

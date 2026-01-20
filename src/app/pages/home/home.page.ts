@@ -34,6 +34,7 @@ import { ForecastListComponent } from 'src/app/components/organisms/forecast-lis
 import { CurrentWeatherComponent } from 'src/app/components/organisms/current-weather/current-weather.component';
 import { WeatherDetailsGridComponent } from 'src/app/components/organisms/weather-details-grid/weather-details-grid.component';
 import { WeatherHeaderComponent } from 'src/app/components/organisms/weather-header/weather-header.component';
+import { SectionTitleComponent } from 'src/app/components/atoms/section-title/section-title.component';
 import {
   Subject,
   combineLatest,
@@ -77,6 +78,7 @@ import {
     CurrentWeatherComponent,
     WeatherDetailsGridComponent,
     WeatherHeaderComponent,
+    SectionTitleComponent,
   ],
 })
 export class HomePage implements OnInit {

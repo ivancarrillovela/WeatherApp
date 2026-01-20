@@ -9,60 +9,33 @@ import {
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.component';
+import { DailyForecastItemComponent } from '../../molecules/daily-forecast-item/daily-forecast-item.component';
 import {
   SettingsService,
   AppLanguage,
 } from 'src/app/core/services/settings.service';
-import { addIcons } from 'ionicons';
-import { water, navigate } from 'ionicons/icons';
 
 @Component({
   selector: 'app-forecast-list',
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, WeatherIconComponent],
+  imports: [
+    CommonModule,
+    IonicModule,
+    TranslateModule,
+    DailyForecastItemComponent,
+  ],
   template: `
     <div class="forecast-container glass-card">
       @for (day of dailyForecast; track day.dt; let i = $index) {
-        <div class="forecast-item">
-          <div
-            class="forecast-row"
-            [class.active]="
-              selectedDayId === day.dt || (selectedDayId === null && i === 0)
-            "
-            (click)="selectDay(day, i)"
-          >
-            <div class="day-name">
-              {{ day.dt * 1000 | date: 'EEEE' : undefined : currentLang }}
-            </div>
-
-            <div class="condition-col">
-              <app-weather-icon
-                [iconCode]="day.weather[0].icon"
-                class="forecast-icon"
-              ></app-weather-icon>
-
-              <div class="meta-row">
-                <!-- Precipitación -->
-                <div class="meta-item" [class.faded-precip]="day.pop <= 0">
-                  <ion-icon name="water" class="rain-icon"></ion-icon>
-                  <span>{{ day.pop * 100 | number: '1.0-0' }}%</span>
-                </div>
-
-                <!-- Viento -->
-                <div class="meta-item">
-                  <ion-icon name="navigate" class="wind-icon"></ion-icon>
-                  <span>{{ day.wind_speed | number: '1.0-0' }}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="temps">
-              <span class="high">{{ day.temp.max | number: '1.0-0' }}°</span>
-              <span class="low">{{ day.temp.min | number: '1.0-0' }}°</span>
-            </div>
-          </div>
-        </div>
+        <app-daily-forecast-item
+          class="forecast-item"
+          [day]="day"
+          [currentLang]="currentLang"
+          [isActive]="
+            selectedDayId === day.dt || (selectedDayId === null && i === 0)
+          "
+          (select)="selectDay(day, i)"
+        ></app-daily-forecast-item>
       }
     </div>
   `,
@@ -76,9 +49,7 @@ export class ForecastListComponent implements OnInit {
   private settingsService = inject(SettingsService);
   currentLang: AppLanguage = 'en';
 
-  constructor() {
-    addIcons({ water, navigate });
-  }
+  constructor() {}
 
   ngOnInit() {
     this.settingsService.currentLang$.subscribe((lang) => {
@@ -87,7 +58,6 @@ export class ForecastListComponent implements OnInit {
   }
 
   selectDay(day: any, index: number) {
-    // Comprobación si está activo (redundante con pointer-events pero seguro)
     if (
       this.selectedDayId === day.dt ||
       (this.selectedDayId === null && index === 0)

@@ -1,0 +1,54 @@
+:host {
+  min-width: 70px;
+  padding: 15px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  /* Estilos tipo "Píldora" (copiados de .hour-slot) */
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  /* Asegurar que el texto esté centrado si hay saltos de línea, aunque flex align-center ya lo hace */
+  text-align: center;
+}
+
+.time {
+  font-size: 0.8rem;
+  margin: 0 0 10px 0;
+  opacity: 0.8;
+}
+
+.icon-wrapper {
+  margin-bottom: 2px;
+  font-size: 1.5rem;
+}
+
+.hourly-precip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 0.7rem;
+  color: #90cdf4;
+  margin-bottom: 8px;
+  height: 15px;
+  opacity: 1;
+
+  ion-icon {
+    font-size: 0.7rem;
+  }
+
+  &.faded {
+    opacity: 0.3;
+  }
+}
+
+.temp {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
