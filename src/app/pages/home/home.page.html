@@ -140,14 +140,34 @@
                       ➤
                     </div>
                     <div class="speed" style="color: white">
-                      {{ weatherData.current.wind_speed | number:'1.0-0' }}<span
-                        class="unit"
-                        >{{ (currentUnit === 'imperial' ? 'WEATHER.MPH' :
-                        'WEATHER.KPH') | translate }}</span
+                      {{ weatherData.current.wind_speed | number:'1.0-0' }}
+                      <span class="unit">
+                        {{ (currentUnit === 'imperial' ? 'WEATHER.MPH' :
+                        'WEATHER.KPH') | translate }}
+                      </span>
+
+                      <!-- Wind Level Badge -->
+                      <span
+                        class="badge"
+                        [class.low]="getWindStatus(weatherData.current.wind_speed).color === 'success'"
+                        [class.high]="getWindStatus(weatherData.current.wind_speed).color !== 'success'"
+                        style="
+                          margin-left: 8px;
+                          font-size: 0.7rem;
+                          vertical-align: middle;
+                        "
                       >
+                        {{ getWindStatus(weatherData.current.wind_speed).key |
+                        translate }}
+                      </span>
                     </div>
+
                     <!-- Direction text could be complex to translate dynamically without logic, simplifying for now or kept static -->
                   </div>
+                  <ion-progress-bar
+                    [value]="getWindStatus(weatherData.current.wind_speed).value"
+                    [color]="getWindStatus(weatherData.current.wind_speed).color"
+                  ></ion-progress-bar>
                 </div>
               </ion-col>
             </ion-row>
@@ -165,15 +185,6 @@
           <!-- SECTIONS -->
           <div class="section-title">
             <span>{{ 'HOME.TIMELINE' | translate }}</span>
-            <span
-              class="link"
-              style="
-                float: right;
-                font-size: 0.8rem;
-                color: var(--ion-color-primary);
-              "
-              >{{ 'HOME.FIVE_DAYS' | translate }} →</span
-            >
           </div>
 
           <!-- HOURLY -->

@@ -89,7 +89,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    // Subscribe to language changes to update UI state and reload data
+    // Suscribirse a cambios de idioma para actualizar UI y recargar datos
     this.settingsService.currentLang$.subscribe((lang) => {
       this.currentLang = lang;
       if (this.weatherData) {
@@ -98,21 +98,21 @@ export class HomePage implements OnInit {
       }
     });
 
-    // Subscribe to unit changes to refetch data
+    // Suscribirse a cambios de unidad para recargar datos
     this.settingsService.currentUnit$.subscribe((unit) => {
       this.currentUnit = unit;
-      // If we have data, reload it with new units
+      // Si hay datos, recargar con nuevas unidades
       if (this.weatherData) {
-        // Use coordinates from current weather data if available
+        // Usar coordenadas actuales
         const { lat, lon } = this.weatherData;
         this.loadWeather(lat, lon);
       } else {
-        // Default initial load - try to get location first, else default
+        // Carga inicial por defecto - intentar ubicación, si no defecto
         this.getCurrentLocation();
       }
     });
 
-    // Setup Autocomplete
+    // Configuración de Autocompletado
     this.searchSubject
       .pipe(
         debounceTime(400),
@@ -123,11 +123,11 @@ export class HomePage implements OnInit {
         }),
       )
       .subscribe((apiResults: any[]) => {
-        // Merge with local results
+        // Fusionar con resultados locales
         const query = this.citySearch;
         const rawLocalResults = this.weatherService.searchLocalCities(query);
 
-        // Localize Local Results
+        // Localizar Resultados Locales
         const localResults = rawLocalResults.map((city) => {
           const localName =
             city.local_names && city.local_names[this.currentLang]
@@ -136,7 +136,7 @@ export class HomePage implements OnInit {
           return { ...city, name: localName };
         });
 
-        // Filter out duplicates from API & Localize Names
+        // Filtrar duplicados de API y Localizar Nombres
         const processedApi = apiResults
           .filter(
             (apiCity) =>
@@ -146,7 +146,7 @@ export class HomePage implements OnInit {
               ),
           )
           .map((city) => {
-            // Check for localized name in current language
+            // Verificar nombre localizado
             const localName =
               city.local_names && city.local_names[this.currentLang]
                 ? city.local_names[this.currentLang]
@@ -164,10 +164,10 @@ export class HomePage implements OnInit {
     try {
       const position = await Geolocation.getCurrentPosition();
       this.loadWeather(position.coords.latitude, position.coords.longitude);
-      this.citySearch = ''; // Clear search
+      this.citySearch = ''; // Limpiar búsqueda
     } catch (e) {
-      console.error('Error getting location', e);
-      // Fallback to Madrid if location fails on first load and no data
+      console.error('Error obteniendo ubicación', e);
+      // Fallback a Madrid si falla la ubicación
       if (!this.weatherData) {
         this.loadWeather(40.4168, -3.7038);
       }
@@ -192,12 +192,12 @@ export class HomePage implements OnInit {
       });
   }
 
-  // Triggered by key input
+  // Disparado por input de teclado
   onSearchInput(event: any) {
     const query = event.target.value;
     this.citySearch = query;
     if (query && query.length >= 2) {
-      // 1. Instant Local Search
+      // 1. Búsqueda Local Instantánea
       const rawLocalResults = this.weatherService.searchLocalCities(query);
       const localResults = rawLocalResults.map((city) => {
         const localName =
@@ -209,7 +209,7 @@ export class HomePage implements OnInit {
       this.citySuggestions = localResults;
       this.showSuggestions = localResults.length > 0;
 
-      // 2. Trigger API Search (Debounced)
+      // 2. Disparar Búsqueda API (Debounced)
       if (query.length >= 3) {
         this.searchSubject.next(query);
       }
@@ -219,11 +219,11 @@ export class HomePage implements OnInit {
     }
   }
 
-  // Select from dropdown
+  // Seleccionar de la lista desplegable
   selectCity(city: any) {
     this.citySearch = city.name;
     this.showSuggestions = false;
-    this.citySuggestions = []; // Clear suggestions
+    this.citySuggestions = []; // Limpiar sugerencias
     this.loadWeather(city.lat, city.lon);
   }
 
@@ -241,5 +241,37 @@ export class HomePage implements OnInit {
           },
         });
     }
+  }
+
+  // Ayudante para UI de Nivel de Viento
+  getWindStatus(speed: number): { key: string; color: string; value: number } {
+    // Normalizar a km/h para cálculo unificado
+    // Si es Imperial (mph):
+    // Suave: < 12, Moderado: 12-25, Fuerte: 25-37, Muy: > 37
+
+    let kph = speed;
+    if (this.currentUnit === 'imperial') {
+      kph = speed * 1.60934;
+    }
+
+    if (kph < 20)
+      return {
+        key: 'WEATHER.WIND_LEVEL.LIGHT',
+        color: 'success',
+        value: kph / 100,
+      };
+    if (kph < 40)
+      return {
+        key: 'WEATHER.WIND_LEVEL.MODERATE',
+        color: 'warning',
+        value: kph / 100,
+      };
+    if (kph < 60)
+      return {
+        key: 'WEATHER.WIND_LEVEL.STRONG',
+        color: 'danger',
+        value: kph / 100,
+      };
+    return { key: 'WEATHER.WIND_LEVEL.VERY_STRONG', color: 'danger', value: 1 };
   }
 }

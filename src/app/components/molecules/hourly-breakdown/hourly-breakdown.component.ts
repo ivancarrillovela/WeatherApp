@@ -45,9 +45,16 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
         align-items: center;
         justify-content: space-between;
 
-        /* Overwrite glass-card specific for small items if needed */
-        border-radius: 30px; /* Pill shape */
-        background: rgba(255, 255, 255, 0.05); /* Slightly more transparent */
+        /* Sobrescribir glass-card específico para items pequeños si es necesario */
+        border-radius: 30px; /* Forma de píldora */
+        background: rgba(
+          255,
+          255,
+          255,
+          0.05
+        ); /* Ligeramente más transparente */
+        box-shadow: none; /* Eliminar sombra dura */
+        border: 1px solid rgba(255, 255, 255, 0.05); /* Borde más suave */
 
         .time {
           font-size: 0.8rem;

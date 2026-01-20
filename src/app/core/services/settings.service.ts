@@ -26,8 +26,8 @@ export class SettingsService {
     this.translate.use(lang);
     this.currentLangSubject.next(lang);
 
-    // Auto-switch units based on language convention
-    // English -> Fahrenheit (imperial), Spanish -> Celsius (metric)
+    // Cambiar unidades automáticamente según convención de idioma
+    // Inglés -> Fahrenheit (imperial), Español -> Celsius (métrico)
     if (lang === 'en') {
       this.setUnit('imperial');
     } else {

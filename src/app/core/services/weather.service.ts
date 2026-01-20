@@ -74,7 +74,25 @@ export class WeatherService {
     );
   }
 
-  // Unified method to get full weather data by coordinates (mimics OneCall)
+  // Obtener nombre exacto mediante geocodificación inversa
+  private getNameFromGeo(
+    geo: any[],
+    currentName: string,
+    lang: string,
+  ): string {
+    if (geo && geo.length > 0) {
+      const location = geo[0];
+      // Preferir nombre localizado
+      if (location.local_names && location.local_names[lang]) {
+        return location.local_names[lang];
+      } else {
+        return location.name;
+      }
+    }
+    return currentName;
+  }
+
+  // Método unificado para obtener todos los datos climáticos por coordenadas
   getWeather(
     lat: number,
     lon: number,
@@ -84,41 +102,32 @@ export class WeatherService {
     return forkJoin({
       current: this.getCurrentWeather(lat, lon, units, lang),
       forecast: this.getForecast(lat, lon, units, lang),
-      uv: this.getUVIndex(lat, lon).pipe(catchError(() => of({ value: 0 }))), // Catch errors, default to 0
+      uv: this.getUVIndex(lat, lon).pipe(catchError(() => of({ value: 0 }))), // Capturar error, por defecto 0
       geo: this.reverseGeocode(lat, lon).pipe(
-        // Fail gracefully if reverse geo fails
+        // Fallar gentilmente si falla la geocodificación inversa
         switchMap((res) => of(res)),
         catchError(() => of([])),
       ),
     }).pipe(
       map(({ current, forecast, uv, geo }) => {
-        // Use the name from reverse geocoding if available, as it is more precise
-        let exactName = current.name;
-        if (geo && geo.length > 0) {
-          const location = geo[0];
-          // Prefer localized name
-          if (location.local_names && location.local_names[lang]) {
-            exactName = location.local_names[lang];
-          } else {
-            exactName = location.name;
-          }
-        }
+        // Usar el nombre de la geocodificación inversa si está disponible
+        const exactName = this.getNameFromGeo(geo, current.name, lang);
 
-        // Override the name in current weather object
+        // Sobrescribir el nombre en el objeto current
         const currentWithPreciseName = { ...current, name: exactName };
         return this.mapToWeatherData(
           lat,
           lon,
           currentWithPreciseName,
           forecast,
-          uv.value, // Pass UV value
-          units, // Pass units
+          uv.value, // Pasar valor UV
+          units, // Pasar unidades
         );
       }),
     );
   }
 
-  // Helper to fetch both and map to OneCall-like structure
+  // Ayudante para obtener datos por ciudad (misma estructura)
   getWeatherByCity(
     city: string,
     units: string = 'imperial',
@@ -147,7 +156,7 @@ export class WeatherService {
             ),
           );
         } else {
-          throw new Error('City not found');
+          throw new Error('Ciudad no encontrada');
         }
       }),
     );
@@ -159,12 +168,12 @@ export class WeatherService {
     current: any,
     forecast: any,
     uvValue: number = 0,
-    units: string = 'imperial', // Add units parameter
+    units: string = 'imperial',
   ): any {
-    // Current Weather
+    // Clima Actual
     let windSpeed = current.wind.speed;
     if (units === 'metric') {
-      windSpeed = windSpeed * 3.6; // Convert m/s to km/h
+      windSpeed = windSpeed * 3.6; // Convertir m/s a km/h
     }
 
     const currentWeather = {
@@ -177,8 +186,8 @@ export class WeatherService {
       feels_like: current.main.feels_like,
       pressure: current.main.pressure,
       humidity: current.main.humidity,
-      dew_point: 0, // Not available in 2.5 directly
-      uvi: uvValue, // Use real UV value
+      dew_point: 0,
+      uvi: uvValue,
       clouds: current.clouds.all,
       visibility: current.visibility,
       wind_speed: windSpeed,
@@ -186,11 +195,11 @@ export class WeatherService {
       weather: current.weather,
     };
 
-    // Process Forecast for Daily and Hourly
+    // Procesar Pronóstico Diario y por Hora
     const dailyMap = new Map<string, any>();
     const hourlyList = [];
 
-    // Hourly: Take first 8 items (approx 24h)
+    // Por Hora: Tomar los primeros 8 elementos (approx 24h)
     for (let i = 0; i < Math.min(forecast.list.length, 8); i++) {
       const item = forecast.list[i];
       hourlyList.push({
@@ -210,7 +219,7 @@ export class WeatherService {
       });
     }
 
-    // Daily: Aggregate high/lows
+    // Diario: Agregar máximas/mínimas
     forecast.list.forEach((item: any) => {
       const date = new Date(item.dt * 1000).toISOString().split('T')[0];
       if (!dailyMap.has(date)) {
@@ -218,7 +227,7 @@ export class WeatherService {
           dt: item.dt,
           temp_min: item.main.temp_min,
           temp_max: item.main.temp_max,
-          weather: item.weather[0], // Take first weather state
+          weather: item.weather[0], // Tomar el primer estado del clima
           humidity: [],
           wind_speed: [],
         });
@@ -227,7 +236,6 @@ export class WeatherService {
       day.temp_min = Math.min(day.temp_min, item.main.temp_min);
       day.temp_max = Math.max(day.temp_max, item.main.temp_max);
       if (item.main.humidity) day.humidity.push(item.main.humidity);
-      // Prioritize mid-day weather icon if available, else keep first
     });
 
     const dailyList = Array.from(dailyMap.values())
@@ -257,12 +265,12 @@ export class WeatherService {
         pop: 0,
         uvi: 0,
       }))
-      .slice(0, 5); // Consolidate to top 5 days
+      .slice(0, 5); // Consolidar a los primeros 5 días
 
     return {
       lat,
       lon,
-      timezone: 'UTC', // 2.5 gives offset in seconds (current.timezone), mapping needed if strictly used
+      timezone: 'UTC',
       timezone_offset: current.timezone,
       current: currentWeather,
       daily: dailyList,

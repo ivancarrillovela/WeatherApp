@@ -1,20 +1,22 @@
 {
   "HOME": {
-    "HELLO": "Hola",
     "TIMELINE": "Línea de tiempo",
-    "FIVE_DAYS": "5 Días",
     "FORECAST_TITLE": "Pronóstico de 5 días",
     "LOADING": "Cargando clima...",
     "SEARCH_PLACEHOLDER": "Buscar ciudad..."
   },
   "WEATHER": {
-    "WIND": "Viento",
-    "HUMIDITY": "Humedad",
+    "WIND": "Viento y Dirección",
     "UV": "Índice UV",
-    "RAIN": "Precipitación",
-    "HIGH": "Alto",
-    "LOW": "Bajo",
+    "HIGH": "Máx",
+    "LOW": "Mín",
     "MPH": "mph",
-    "KPH": "km/h"
+    "KPH": "km/h",
+    "WIND_LEVEL": {
+      "LIGHT": "Suave",
+      "MODERATE": "Moderado",
+      "STRONG": "Fuerte",
+      "VERY_STRONG": "Muy Fuerte"
+    }
   }
 }
