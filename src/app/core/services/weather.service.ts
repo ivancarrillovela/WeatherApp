@@ -110,6 +110,8 @@ export class WeatherService {
   ): any {
     // Current Weather
     const currentWeather = {
+      name: current.name,
+      country: current.sys.country,
       dt: current.dt,
       sunrise: current.sys.sunrise,
       sunset: current.sys.sunset,
