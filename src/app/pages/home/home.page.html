@@ -175,29 +175,23 @@
             <!-- EXTRA ROW: Humidity & Visibility -->
             <ion-row class="ion-margin-top">
               <ion-col size="6" class="ion-padding-end">
-                <div class="glass-card detail-card">
-                  <div class="card-header">
-                    <ion-icon name="water" color="primary"></ion-icon>
-                    <span>{{ 'WEATHER.HUMIDITY' | translate }}</span>
-                  </div>
-                  <div class="card-value">
-                    {{ weatherData.current.humidity }}
-                    <span style="font-size: 1rem; opacity: 0.7">%</span>
-                  </div>
-                  <div style="height: 4px"></div>
-                </div>
+                <app-weather-detail-card
+                  [title]="'WEATHER.HUMIDITY' | translate"
+                  icon="water"
+                  iconColor="primary"
+                >
+                  {{ weatherData.current.humidity }}
+                  <span style="font-size: 1rem; opacity: 0.7">%</span>
+                </app-weather-detail-card>
               </ion-col>
               <ion-col size="6" class="ion-padding-start">
-                <div class="glass-card detail-card">
-                  <div class="card-header">
-                    <ion-icon name="moon" color="warning"></ion-icon>
-                    <span>{{ 'WEATHER.SUNSET' | translate }}</span>
-                  </div>
-                  <div class="card-value">
-                    {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
-                  </div>
-                  <div style="height: 4px"></div>
-                </div>
+                <app-weather-detail-card
+                  [title]="'WEATHER.SUNSET' | translate"
+                  icon="moon"
+                  iconColor="warning"
+                >
+                  {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
+                </app-weather-detail-card>
               </ion-col>
             </ion-row>
           </ion-grid>

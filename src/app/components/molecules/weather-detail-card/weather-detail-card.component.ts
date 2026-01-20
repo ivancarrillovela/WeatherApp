@@ -1,4 +1,4 @@
-import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonIcon } from '@ionic/angular/standalone';
 
@@ -15,57 +15,54 @@ import { IonIcon } from '@ionic/angular/standalone';
       <div class="card-value">
         <ng-content></ng-content>
       </div>
+      <div style="height: 4px;"></div>
     </div>
   `,
   styles: [
     `
-      /* Rely on global .glass-card for background/border/blur */
+      .glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s;
+      }
 
       .detail-card {
-        padding: 15px; /* Match home.page.scss */
-        height: 160px; /* Match home.page.scss */
+        padding: 16px;
+        height: 100%; /* Ensure full height in grid */
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
       }
 
       .card-header {
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 0.8rem; /* Match home.page.scss */
-        opacity: 0.7; /* Match home.page.scss */
-        font-weight: 600;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 8px;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
 
         ion-icon {
-          font-size: 1.2rem; /* Keep icon sizing */
-          opacity: 1; /* Reset opacity for icon if needed, or let inherited */
+          font-size: 1.2rem;
         }
       }
 
       .card-value {
-        font-size: 2.5rem; /* Match home.page.scss */
-        font-weight: 400;
-        flex: 1;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #fff;
         display: flex;
-        justify-content: center;
         align-items: center;
-        gap: 10px;
-        color: white; /* Ensure text is white */
-      }
-
-      /* Support projected content alignment if needed */
-      :host ::ng-deep .uv-display,
-      :host ::ng-deep .wind-circle {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
+        gap: 8px;
       }
     `,
   ],
-  encapsulation: ViewEncapsulation.None, // Allow styles to bleed if necessary, or just reliance on global
 })
 export class WeatherDetailCardComponent {
   @Input() title: string = '';
