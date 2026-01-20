@@ -33,6 +33,12 @@ import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-br
 import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
+import {
+  SettingsService,
+  AppLanguage,
+  UnitSystem,
+} from 'src/app/core/services/settings.service';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -64,11 +70,12 @@ import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 })
 export class HomePage implements OnInit {
   private weatherService = inject(WeatherService);
-  private translate = inject(TranslateService);
+  private settingsService = inject(SettingsService);
 
   weatherData: any;
   citySearch: string = '';
-  currentLang: string = 'en';
+  currentLang: AppLanguage = 'en';
+  currentUnit: UnitSystem = 'imperial';
 
   // Autocomplete
   searchSubject = new Subject<string>();
@@ -76,13 +83,32 @@ export class HomePage implements OnInit {
   showSuggestions: boolean = false;
 
   constructor() {
-    this.translate.setDefaultLang('en');
-    this.translate.use('en');
     addIcons({ sunny, navigate });
   }
 
   ngOnInit() {
-    this.loadWeather(40.4168, -3.7038); // Madrid default
+    // Subscribe to language changes to update UI state and reload data
+    this.settingsService.currentLang$.subscribe((lang) => {
+      this.currentLang = lang;
+      if (this.weatherData) {
+        const { lat, lon } = this.weatherData;
+        this.loadWeather(lat, lon);
+      }
+    });
+
+    // Subscribe to unit changes to refetch data
+    this.settingsService.currentUnit$.subscribe((unit) => {
+      this.currentUnit = unit;
+      // If we have data, reload it with new units
+      if (this.weatherData) {
+        // Use coordinates from current weather data if available
+        const { lat, lon } = this.weatherData;
+        this.loadWeather(lat, lon);
+      } else {
+        // Default initial load
+        this.loadWeather(40.4168, -3.7038); // Madrid
+      }
+    });
 
     // Setup Autocomplete
     this.searchSubject
@@ -114,17 +140,19 @@ export class HomePage implements OnInit {
   }
 
   toggleLanguage() {
-    this.currentLang = this.currentLang === 'en' ? 'es' : 'en';
-    this.translate.use(this.currentLang);
+    const newLang = this.currentLang === 'en' ? 'es' : 'en';
+    this.settingsService.setLanguage(newLang);
   }
 
   loadWeather(lat: number, lon: number) {
-    this.weatherService.getWeather(lat, lon).subscribe({
-      next: (data) => {
-        this.weatherData = data;
-      },
-      error: (err) => console.error(err),
-    });
+    this.weatherService
+      .getWeather(lat, lon, this.currentUnit, this.currentLang)
+      .subscribe({
+        next: (data) => {
+          this.weatherData = data;
+        },
+        error: (err) => console.error(err),
+      });
   }
 
   // Triggered by key input
@@ -158,14 +186,16 @@ export class HomePage implements OnInit {
   searchCity() {
     if (this.citySearch && this.citySearch.trim()) {
       this.showSuggestions = false;
-      this.weatherService.getWeatherByCity(this.citySearch).subscribe({
-        next: (data) => {
-          this.weatherData = data;
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      });
+      this.weatherService
+        .getWeatherByCity(this.citySearch, this.currentUnit, this.currentLang)
+        .subscribe({
+          next: (data) => {
+            this.weatherData = data;
+          },
+          error: (err) => {
+            console.error(err);
+          },
+        });
     }
   }
 }

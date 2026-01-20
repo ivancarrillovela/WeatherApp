@@ -1,8 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.component';
+import {
+  SettingsService,
+  AppLanguage,
+} from 'src/app/core/services/settings.service';
 
 @Component({
   selector: 'app-forecast-list',
@@ -13,7 +17,7 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
       @for (day of dailyForecast; track day.dt) {
         <div class="forecast-row">
           <div class="day-name">
-            {{ day.dt * 1000 | date: 'EEEE' }}
+            {{ day.dt * 1000 | date: 'EEEE' : undefined : currentLang }}
           </div>
 
           <div class="condition">
@@ -56,6 +60,7 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
           flex: 1;
           font-weight: 500;
           font-size: 1rem;
+          text-transform: capitalize;
         }
 
         .condition {
@@ -91,6 +96,15 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
     `,
   ],
 })
-export class ForecastListComponent {
+export class ForecastListComponent implements OnInit {
   @Input() dailyForecast: any[] = [];
+
+  private settingsService = inject(SettingsService);
+  currentLang: AppLanguage = 'en';
+
+  ngOnInit() {
+    this.settingsService.currentLang$.subscribe((lang) => {
+      this.currentLang = lang;
+    });
+  }
 }

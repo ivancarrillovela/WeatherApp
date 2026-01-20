@@ -1,11 +1,20 @@
 {
   "HOME": {
-    "HELLO": "Hello"
+    "HELLO": "Hello",
+    "TIMELINE": "Timeline",
+    "FIVE_DAYS": "5 Days",
+    "FORECAST_TITLE": "5-Day Forecast",
+    "LOADING": "Loading weather...",
+    "SEARCH_PLACEHOLDER": "Search city..."
   },
   "WEATHER": {
     "WIND": "Wind",
     "HUMIDITY": "Humidity",
     "UV": "UV Index",
-    "RAIN": "Precipitation"
+    "RAIN": "Precipitation",
+    "HIGH": "High",
+    "LOW": "Low",
+    "MPH": "mph",
+    "KPH": "km/h"
   }
 }

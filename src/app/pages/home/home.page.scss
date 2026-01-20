@@ -1,3 +1,33 @@
+/* Language Toggle */
+.language-toggle {
+    display: flex;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 3px;
+    gap: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    .toggle-option {
+        padding: 6px 14px;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: rgba(255, 255, 255, 0.7);
+
+        &.active {
+            background: white;
+            color: black;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        &:hover:not(.active) {
+            color: white;
+        }
+    }
+}
+
 /* Search Bar Customization */
 .custom-searchbar {
   --background: rgba(255, 255, 255, 0.15);

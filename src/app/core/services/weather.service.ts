@@ -37,24 +37,39 @@ export class WeatherService {
   }
 
   // Get Current Weather (API 2.5)
-  getCurrentWeather(lat: number, lon: number): Observable<any> {
+  getCurrentWeather(
+    lat: number,
+    lon: number,
+    units: string = 'imperial',
+    lang: string = 'en',
+  ): Observable<any> {
     return this.http.get(
-      `${this.baseUrl}/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${this.apiKey}`,
+      `${this.baseUrl}/weather?lat=${lat}&lon=${lon}&units=${units}&lang=${lang}&appid=${this.apiKey}`,
     );
   }
 
   // Get 5 Day / 3 Hour Forecast (API 2.5)
-  getForecast(lat: number, lon: number): Observable<any> {
+  getForecast(
+    lat: number,
+    lon: number,
+    units: string = 'imperial',
+    lang: string = 'en',
+  ): Observable<any> {
     return this.http.get(
-      `${this.baseUrl}/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${this.apiKey}`,
+      `${this.baseUrl}/forecast?lat=${lat}&lon=${lon}&units=${units}&lang=${lang}&appid=${this.apiKey}`,
     );
   }
 
   // Unified method to get full weather data by coordinates (mimics OneCall)
-  getWeather(lat: number, lon: number): Observable<any> {
+  getWeather(
+    lat: number,
+    lon: number,
+    units: string = 'imperial',
+    lang: string = 'en',
+  ): Observable<any> {
     return forkJoin({
-      current: this.getCurrentWeather(lat, lon),
-      forecast: this.getForecast(lat, lon),
+      current: this.getCurrentWeather(lat, lon, units, lang),
+      forecast: this.getForecast(lat, lon, units, lang),
     }).pipe(
       map(({ current, forecast }) =>
         this.mapToWeatherData(lat, lon, current, forecast),
@@ -63,14 +78,18 @@ export class WeatherService {
   }
 
   // Helper to fetch both and map to OneCall-like structure
-  getWeatherByCity(city: string): Observable<any> {
+  getWeatherByCity(
+    city: string,
+    units: string = 'imperial',
+    lang: string = 'en',
+  ): Observable<any> {
     return this.getCoordinates(city).pipe(
       switchMap((geoData: any[]) => {
         if (geoData.length > 0) {
           const { lat, lon } = geoData[0];
           return forkJoin({
-            current: this.getCurrentWeather(lat, lon),
-            forecast: this.getForecast(lat, lon),
+            current: this.getCurrentWeather(lat, lon, units, lang),
+            forecast: this.getForecast(lat, lon, units, lang),
           }).pipe(
             map(({ current, forecast }) =>
               this.mapToWeatherData(lat, lon, current, forecast),

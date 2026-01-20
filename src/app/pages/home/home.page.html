@@ -6,13 +6,27 @@
       [(ngModel)]="citySearch"
       (search)="searchCity()"
       (ionInput)="onSearchInput($event)"
-      placeholder="Search city..."
+      [placeholder]="'HOME.SEARCH_PLACEHOLDER' | translate"
       class="custom-searchbar"
     ></ion-searchbar>
     <ion-buttons slot="end">
-      <ion-button (click)="toggleLanguage()" color="light" fill="clear">
-        {{ currentLang | uppercase }}
-      </ion-button>
+      <!-- Custom Language Toggle -->
+      <div class="language-toggle">
+        <div
+          class="toggle-option"
+          [class.active]="currentLang === 'en'"
+          (click)="currentLang !== 'en' && toggleLanguage()"
+        >
+          EN
+        </div>
+        <div
+          class="toggle-option"
+          [class.active]="currentLang === 'es'"
+          (click)="currentLang !== 'es' && toggleLanguage()"
+        >
+          ES
+        </div>
+      </div>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -73,7 +87,7 @@
                 <div class="glass-card detail-card">
                   <div class="card-header">
                     <ion-icon name="sunny" color="warning"></ion-icon>
-                    <span>UV INDEX</span>
+                    <span>{{ 'WEATHER.UV' | translate }}</span>
                   </div>
                   <div class="card-value">
                     {{ weatherData.current.uvi }}
@@ -81,7 +95,8 @@
                       class="badge"
                       [ngClass]="{'high': weatherData.current.uvi > 5, 'low': weatherData.current.uvi <= 5}"
                     >
-                      {{ weatherData.current.uvi > 5 ? 'High' : 'Low' }}
+                      {{ (weatherData.current.uvi > 5 ? 'WEATHER.HIGH' :
+                      'WEATHER.LOW') | translate }}
                     </span>
                   </div>
                   <ion-progress-bar
@@ -94,7 +109,7 @@
                 <div class="glass-card detail-card">
                   <div class="card-header">
                     <ion-icon name="navigate" color="tertiary"></ion-icon>
-                    <span>WIND</span>
+                    <span>{{ 'WEATHER.WIND' | translate }}</span>
                   </div>
                   <div class="wind-circle">
                     <div
@@ -106,10 +121,11 @@
                     <div class="speed">
                       {{ weatherData.current.wind_speed | number:'1.0-0' }}<span
                         class="unit"
-                        >mph</span
+                        >{{ (currentUnit === 'imperial' ? 'WEATHER.MPH' :
+                        'WEATHER.KPH') | translate }}</span
                       >
                     </div>
-                    <div class="direction">North West</div>
+                    <!-- Direction text could be complex to translate dynamically without logic, simplifying for now or kept static -->
                   </div>
                 </div>
               </ion-col>
@@ -127,7 +143,7 @@
         >
           <!-- SECTIONS -->
           <div class="section-title">
-            <span>Timeline</span>
+            <span>{{ 'HOME.TIMELINE' | translate }}</span>
             <span
               class="link"
               style="
@@ -135,7 +151,7 @@
                 font-size: 0.8rem;
                 color: var(--ion-color-primary);
               "
-              >5 Days →</span
+              >{{ 'HOME.FIVE_DAYS' | translate }} →</span
             >
           </div>
 
@@ -145,7 +161,7 @@
           ></app-hourly-breakdown>
 
           <div class="section-title ion-margin-top">
-            <span>5-Day Forecast</span>
+            <span>{{ 'HOME.FORECAST_TITLE' | translate }}</span>
           </div>
 
           <app-forecast-list
@@ -160,7 +176,7 @@
     class="ion-text-center ion-padding"
     style="margin-top: 50vh; transform: translateY(-50%)"
   >
-    <p style="color: white">Loading weather...</p>
+    <p style="color: white">{{ 'HOME.LOADING' | translate }}</p>
     <ion-spinner color="light"></ion-spinner>
   </div>
   }
