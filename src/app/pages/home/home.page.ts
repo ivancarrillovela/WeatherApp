@@ -30,7 +30,6 @@ import { sunny, navigate, locate, water, moon } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { WeatherIconComponent } from 'src/app/components/atoms/weather-icon/weather-icon.component';
 import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
-import { WeatherDetailCardComponent } from 'src/app/components/molecules/weather-detail-card/weather-detail-card.component';
 import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
@@ -67,7 +66,6 @@ import {
     TranslateModule,
     WeatherIconComponent,
     HourlyBreakdownComponent,
-    WeatherDetailCardComponent,
     ForecastListComponent,
   ],
 })
