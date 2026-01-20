@@ -40,7 +40,13 @@ import { WeatherIconComponent } from 'src/app/components/atoms/weather-icon/weat
 import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
 import { WeatherDetailCardComponent } from 'src/app/components/molecules/weather-detail-card/weather-detail-card.component';
 import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import {
+  Subject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+} from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
 
 import {
@@ -103,28 +109,24 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    // Suscribirse a cambios de idioma para actualizar UI y recargar datos
-    this.settingsService.currentLang$.subscribe((lang) => {
-      this.currentLang = lang;
-      if (this.weatherData) {
-        const { lat, lon } = this.weatherData;
-        this.loadWeather(lat, lon);
-      }
-    });
+    // Sincronizar cambios de idioma y unidad para evitar condiciones de carrera
+    combineLatest([
+      this.settingsService.currentLang$,
+      this.settingsService.currentUnit$,
+    ])
+      .pipe(debounceTime(50))
+      .subscribe(([lang, unit]) => {
+        this.currentLang = lang;
+        this.currentUnit = unit;
 
-    // Suscribirse a cambios de unidad para recargar datos
-    this.settingsService.currentUnit$.subscribe((unit) => {
-      this.currentUnit = unit;
-      // Si hay datos, recargar con nuevas unidades
-      if (this.weatherData) {
-        // Usar coordenadas actuales
-        const { lat, lon } = this.weatherData;
-        this.loadWeather(lat, lon);
-      } else {
-        // Carga inicial por defecto - intentar ubicación, si no defecto
-        this.getCurrentLocation();
-      }
-    });
+        if (this.weatherData) {
+          const { lat, lon } = this.weatherData;
+          this.loadWeather(lat, lon);
+        } else {
+          // Carga inicial si no hay datos
+          this.getCurrentLocation();
+        }
+      });
 
     // Configuración de Autocompletado
     this.searchSubject
