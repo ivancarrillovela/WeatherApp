@@ -21,6 +21,12 @@
     "HUMIDITY": "Humidity",
     "VISIBILITY": "Visibility",
     "SUNSET": "Sunset",
-    "PRECIPITATION": "Precipitation"
+    "PRECIPITATION": "Precipitation",
+    "UV_LEVEL": {
+      "LOW": "Low",
+      "MODERATE": "Moderate",
+      "HIGH": "High",
+      "EXTREME": "Extreme"
+    }
   }
 }
