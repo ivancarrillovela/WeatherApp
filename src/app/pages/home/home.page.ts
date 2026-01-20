@@ -263,10 +263,10 @@ export class HomePage implements OnInit {
   }
 
   getUVColor(uv: number): string {
-    if (!uv || uv <= 2) return 'success'; // Green
-    if (uv <= 5) return 'warning'; // Yellow
-    if (uv <= 7) return 'warning'; // Orange-ish (Ionic warning is yellow/orange)
-    return 'danger'; // Red
+    if (!uv || uv <= 2) return 'success'; // Verde
+    if (uv <= 5) return 'warning'; // Amarillo
+    if (uv <= 7) return 'warning'; // Naranja (Ionic warning es amarillo/naranja)
+    return 'danger'; // Rojo
   }
 
   // Ayudante para UI de Nivel de Viento
