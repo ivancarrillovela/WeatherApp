@@ -260,7 +260,12 @@ export class HomePage implements OnInit {
   }
 
   // Ayudante para UI de Nivel de Viento
-  getWindStatus(speed: number): { key: string; color: string; value: number } {
+  getWindStatus(speed: number): {
+    key: string;
+    color: string;
+    cssClass: string;
+    value: number;
+  } {
     // Normalizar a km/h para cálculo unificado
     // Si es Imperial (mph):
     // Suave: < 12, Moderado: 12-25, Fuerte: 25-37, Muy: > 37
@@ -273,24 +278,28 @@ export class HomePage implements OnInit {
     if (kph < 20)
       return {
         key: 'WEATHER.WIND_LEVEL.LIGHT',
-        color: 'low',
+        color: 'success',
+        cssClass: 'low',
         value: kph / 100,
       };
     if (kph < 40)
       return {
         key: 'WEATHER.WIND_LEVEL.MODERATE',
-        color: 'moderate',
+        color: 'warning',
+        cssClass: 'moderate',
         value: kph / 100,
       };
     if (kph < 60)
       return {
         key: 'WEATHER.WIND_LEVEL.STRONG',
-        color: 'high',
+        color: 'warning',
+        cssClass: 'high',
         value: kph / 100,
       };
     return {
       key: 'WEATHER.WIND_LEVEL.VERY_STRONG',
-      color: 'extreme',
+      color: 'danger',
+      cssClass: 'extreme',
       value: 1,
     };
   }
