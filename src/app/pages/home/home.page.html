@@ -9,6 +9,20 @@
       [placeholder]="'HOME.SEARCH_PLACEHOLDER' | translate"
       class="custom-searchbar"
     ></ion-searchbar>
+    <ion-button
+      fill="clear"
+      (click)="getCurrentLocation()"
+      [disabled]="loadingLocation"
+      class="location-button"
+    >
+      <ion-icon
+        slot="icon-only"
+        name="locate"
+        color="light"
+        *ngIf="!loadingLocation"
+      ></ion-icon>
+      <ion-spinner name="crescent" *ngIf="loadingLocation"></ion-spinner>
+    </ion-button>
     <ion-buttons slot="end">
       <!-- Custom Language Toggle -->
       <div class="language-toggle">

@@ -27,11 +27,12 @@ import {
 import { WeatherService } from 'src/app/core/services/weather.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
-import { sunny, navigate } from 'ionicons/icons';
+import { sunny, navigate, locate } from 'ionicons/icons';
 import { WeatherIconComponent } from 'src/app/components/atoms/weather-icon/weather-icon.component';
 import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
 import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { Geolocation } from '@capacitor/geolocation';
 
 import {
   SettingsService,
@@ -76,6 +77,7 @@ export class HomePage implements OnInit {
   citySearch: string = '';
   currentLang: AppLanguage = 'en';
   currentUnit: UnitSystem = 'imperial';
+  loadingLocation: boolean = false;
 
   // Autocomplete
   searchSubject = new Subject<string>();
@@ -83,7 +85,7 @@ export class HomePage implements OnInit {
   showSuggestions: boolean = false;
 
   constructor() {
-    addIcons({ sunny, navigate });
+    addIcons({ sunny, navigate, locate });
   }
 
   ngOnInit() {
@@ -105,8 +107,8 @@ export class HomePage implements OnInit {
         const { lat, lon } = this.weatherData;
         this.loadWeather(lat, lon);
       } else {
-        // Default initial load
-        this.loadWeather(40.4168, -3.7038); // Madrid
+        // Default initial load - try to get location first, else default
+        this.getCurrentLocation();
       }
     });
 
@@ -137,6 +139,23 @@ export class HomePage implements OnInit {
         this.citySuggestions = [...localResults, ...filteredApi];
         this.showSuggestions = this.citySuggestions.length > 0;
       });
+  }
+
+  async getCurrentLocation() {
+    this.loadingLocation = true;
+    try {
+      const position = await Geolocation.getCurrentPosition();
+      this.loadWeather(position.coords.latitude, position.coords.longitude);
+      this.citySearch = ''; // Clear search
+    } catch (e) {
+      console.error('Error getting location', e);
+      // Fallback to Madrid if location fails on first load and no data
+      if (!this.weatherData) {
+        this.loadWeather(40.4168, -3.7038);
+      }
+    } finally {
+      this.loadingLocation = false;
+    }
   }
 
   toggleLanguage() {
