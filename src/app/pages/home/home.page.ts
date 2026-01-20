@@ -75,8 +75,8 @@ export class HomePage implements OnInit {
 
   weatherData: any;
   citySearch: string = '';
-  currentLang: AppLanguage = 'en';
-  currentUnit: UnitSystem = 'imperial';
+  currentLang: AppLanguage = 'es';
+  currentUnit: UnitSystem = 'metric';
   loadingLocation: boolean = false;
 
   // Autocomplete

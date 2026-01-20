@@ -11,15 +11,15 @@ export type AppLanguage = 'en' | 'es';
 export class SettingsService {
   private translate = inject(TranslateService);
 
-  private currentLangSubject = new BehaviorSubject<AppLanguage>('en');
+  private currentLangSubject = new BehaviorSubject<AppLanguage>('es');
   currentLang$ = this.currentLangSubject.asObservable();
 
-  private currentUnitSubject = new BehaviorSubject<UnitSystem>('imperial');
+  private currentUnitSubject = new BehaviorSubject<UnitSystem>('metric');
   currentUnit$ = this.currentUnitSubject.asObservable();
 
   constructor() {
-    this.translate.setDefaultLang('en');
-    this.setLanguage('en'); // Default
+    this.translate.setDefaultLang('es');
+    this.setLanguage('es'); // Default
   }
 
   setLanguage(lang: AppLanguage) {

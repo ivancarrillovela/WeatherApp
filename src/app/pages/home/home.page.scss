@@ -154,7 +154,11 @@
     .card-value {
         font-size: 2.5rem;
         font-weight: 400;
-        
+        flex: 1; /* Take available space */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
     }
     
     .badge {
