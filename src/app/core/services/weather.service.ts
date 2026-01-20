@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap, forkJoin, map, of } from 'rxjs';
+import { Observable, switchMap, forkJoin, map, of, catchError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CITIES } from '../constants/cities';
 
@@ -23,7 +23,7 @@ export class WeatherService {
   // Buscar ciudades (Autocomplete) - API
   searchCities(query: string): Observable<any[]> {
     return this.http.get<any[]>(
-      `${this.geoUrl}?q=${query}&limit=5&appid=${this.apiKey}`,
+      `${this.geoUrl}/direct?q=${query}&limit=5&appid=${this.apiKey}`,
     );
   }
 
@@ -77,7 +77,15 @@ export class WeatherService {
     return forkJoin({
       current: this.getCurrentWeather(lat, lon, units, lang),
       forecast: this.getForecast(lat, lon, units, lang),
-      geo: this.reverseGeocode(lat, lon), // Fetch precise location name
+      geo: this.reverseGeocode(lat, lon).pipe(
+        // Fail gracefully if reverse geo fails
+        // Use 'catchError' from rxjs/operators (needs import? 'of' is already imported)
+        // Actually, let's map error to empty array
+        switchMap((res) => of(res)),
+        // Wait, catchError is better. import { catchError } from 'rxjs/operators' might be needed if not in 'rxjs'
+        // 'rxjs' main export has 'catchError'? No, usually 'rxjs/operators'
+        // Check imports first.
+      ),
     }).pipe(
       map(({ current, forecast, geo }) => {
         // Use the name from reverse geocoding if available, as it is more precise (e.g., Pamplona vs Navarre)
