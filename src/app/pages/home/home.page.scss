@@ -162,11 +162,13 @@
     }
     
     .badge {
-        font-size: 0.8rem;
-        padding: 4px 10px;
-        border-radius: 12px;
+        font-size: 0.7rem; /* Smaller for mobile to prevent wrapping */
+        padding: 2px 8px;
+        border-radius: 10px;
         vertical-align: middle;
         margin-left: 5px;
+        font-weight: 600;
+        white-space: nowrap; /* Prevent badge text wrapping */
         
         &.low { background: #48bb78; color: white; } /* Green */
         &.moderate { background: #ecc94b; color: black; } /* Yellow/Orange */
