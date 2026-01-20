@@ -1,0 +1,67 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="main-toolbar">
+    <ion-searchbar
+      [ngModel]="citySearch"
+      (ngModelChange)="onSearchChange($event)"
+      (search)="search.emit()"
+      (ionInput)="onInput($event)"
+      [placeholder]="'HOME.SEARCH_PLACEHOLDER' | translate"
+      class="custom-searchbar"
+    ></ion-searchbar>
+
+    <ion-buttons slot="end">
+      <!-- Custom Language Toggle -->
+      <div class="language-toggle">
+        <div
+          class="toggle-option"
+          [class.active]="currentLang === 'en'"
+          (click)="currentLang !== 'en' && toggleLang.emit()"
+        >
+          EN
+        </div>
+        <div
+          class="toggle-option"
+          [class.active]="currentLang === 'es'"
+          (click)="currentLang !== 'es' && toggleLang.emit()"
+        >
+          ES
+        </div>
+      </div>
+
+      <!-- Location Button -->
+      <ion-button
+        fill="clear"
+        (click)="requestLocation.emit()"
+        [disabled]="loadingLocation"
+        class="location-button"
+      >
+        @if (!loadingLocation) {
+          <ion-icon
+            slot="icon-only"
+            name="locate"
+            class="location-icon"
+          ></ion-icon>
+        }
+        @if (loadingLocation) {
+          <ion-spinner name="crescent"></ion-spinner>
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Suggestions Dropdown (Floating) -->
+  @if (showSuggestions && citySuggestions.length > 0) {
+    <div class="suggestions-container">
+      <ion-list lines="none" class="glass-list">
+        @for (city of citySuggestions; track city.lat) {
+          <ion-item button (click)="citySortSelected.emit(city)" detail="false">
+            <ion-label>
+              <h3>{{ city.name }}</h3>
+              <p>{{ city.state ? city.state + ", " : "" }}{{ city.country }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    </div>
+  }
+</ion-header>

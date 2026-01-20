@@ -33,6 +33,7 @@ import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-br
 import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
 import { CurrentWeatherComponent } from 'src/app/components/organisms/current-weather/current-weather.component';
 import { WeatherDetailsGridComponent } from 'src/app/components/organisms/weather-details-grid/weather-details-grid.component';
+import { WeatherHeaderComponent } from 'src/app/components/organisms/weather-header/weather-header.component';
 import {
   Subject,
   combineLatest,
@@ -75,6 +76,7 @@ import {
     ForecastListComponent,
     CurrentWeatherComponent,
     WeatherDetailsGridComponent,
+    WeatherHeaderComponent,
   ],
 })
 export class HomePage implements OnInit {

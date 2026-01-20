@@ -1,88 +1,4 @@
-/* Language Toggle */
-.language-toggle {
-    display: flex;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 3px;
-    gap: 2px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
 
-    .toggle-option {
-        padding: 6px 14px;
-        border-radius: 16px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        color: rgba(255, 255, 255, 0.7);
-
-        &.active {
-            background: white;
-            color: black;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        &:hover:not(.active) {
-            color: white;
-        }
-    }
-}
-
-/* Main Toolbar (Glass Effect) */
-.main-toolbar {
-    --background: rgba(30, 40, 60, 0.85); /* Semi-transparent dark background */
-    --border-style: none; /* Remove default border */
-    backdrop-filter: blur(12px); /* Blur effect */
-    -webkit-backdrop-filter: blur(12px); /* Safari support */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Search Bar Customization */
-.custom-searchbar {
-  --background: rgba(255, 255, 255, 0.15);
-  --color: white;
-  --placeholder-color: #ddd;
-  --icon-color: #ddd;
-  --border-radius: 20px;
-  --box-shadow: none;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-/* Autocomplete Suggestions */
-.suggestions-container {
-    position: absolute;
-    top: 60px; /* Below toolbar */
-    left: 10px;
-    right: 10px;
-    z-index: 9999;
-}
-
-.glass-list {
-    background: rgba(30, 40, 60, 0.95);
-    backdrop-filter: blur(15px);
-    border-radius: 15px;
-    border: 1px solid rgba(255,255,255,0.1);
-    overflow: hidden;
-    
-    ion-item {
-        --background: transparent;
-        --color: white;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        
-        &:last-child {
-            border-bottom: none;
-        }
-
-        h3 {
-            font-weight: 600;
-        }
-        p {
-            opacity: 0.7;
-            font-size: 0.85rem;
-        }
-    }
-}
 
 
 .main-container {
@@ -273,9 +189,7 @@
 }
 
 /* UTILITY CLASSES (Extraction from HTML) */
-.location-icon {
-    color: white !important;
-}
+
 
 .hero-icon {
     font-size: 24px;
