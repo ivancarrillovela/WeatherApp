@@ -3,7 +3,8 @@
     "TIMELINE": "Timeline",
     "FORECAST_TITLE": "5-Day Forecast",
     "LOADING": "Loading weather...",
-    "SEARCH_PLACEHOLDER": "Search city..."
+    "SEARCH_PLACEHOLDER": "Search city...",
+    "TODAY": "Today"
   },
   "WEATHER": {
     "WIND": "Wind",

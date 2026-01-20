@@ -84,6 +84,10 @@ export class HomePage implements OnInit {
   private settingsService = inject(SettingsService);
 
   weatherData: any;
+  originalWeatherData: any; // Store original data to revert
+  selectedDayId: number | null = null;
+  displayDate: number | null = null; // For dynamic title logic
+
   citySearch: string = '';
   currentLang: AppLanguage = 'es';
   currentUnit: UnitSystem = 'metric';
@@ -196,7 +200,10 @@ export class HomePage implements OnInit {
       .getWeather(lat, lon, this.currentUnit, this.currentLang)
       .subscribe({
         next: (data) => {
+          this.originalWeatherData = JSON.parse(JSON.stringify(data)); // Deep copy to preserve state
           this.weatherData = data;
+          this.selectedDayId = null; // Reset selection
+          this.displayDate = null; // Reset date title
         },
         error: (err) => console.error(err),
       });
@@ -309,5 +316,81 @@ export class HomePage implements OnInit {
     }
 
     return { key, color, cssClass, value };
+  }
+
+  onDaySelected(day: any) {
+    // 1. Si seleccionamos "Hoy" (primer día), restauramos el estado original
+    if (
+      this.originalWeatherData?.daily?.length > 0 &&
+      day.dt === this.originalWeatherData.daily[0].dt
+    ) {
+      this.weatherData = JSON.parse(JSON.stringify(this.originalWeatherData));
+      this.selectedDayId = null;
+      this.displayDate = null;
+      return;
+    }
+
+    // 2. Si pulsamos el mismo día ya seleccionado (Toggle), volvemos a la vista original
+    if (this.selectedDayId === day.dt) {
+      this.weatherData = JSON.parse(JSON.stringify(this.originalWeatherData));
+      this.selectedDayId = null;
+      this.displayDate = null;
+      return;
+    }
+
+    this.selectedDayId = day.dt;
+    this.displayDate = day.dt; // Store timestamp for date pipe
+
+    // Construir objeto "Current Weather" basado en el día seleccionado
+    // Usamos el promedio/max del día para representar el "estado actual" de ese día
+    const newCurrent = {
+      ...this.originalWeatherData.current, // Mantener nombre, coordenadas, sys...
+      dt: day.dt,
+      sunrise: day.sunrise,
+      sunset: day.sunset,
+      temp: day.temp.day, // Temp promedio día
+      temp_min: day.temp.min,
+      temp_max: day.temp.max,
+      feels_like: day.feels_like.day,
+      humidity: day.humidity,
+      pressure: day.pressure,
+      wind_speed: day.wind_speed,
+      wind_deg: day.wind_deg,
+      weather: day.weather, // Array de clima
+      clouds: day.clouds,
+      pop: day.pop,
+      uvi: day.uvi,
+      visibility: day.visibility,
+      dew_point: day.dew_point,
+    };
+
+    // Actualizar datos mostrados
+    this.weatherData.current = newCurrent;
+
+    // IMPORTANTE: Rolling Window de 7 elementos
+    // Buscamos el índice de inicio de ese día en la lista completa original
+    if (this.originalWeatherData && this.originalWeatherData.hourly) {
+      // Encontramos el primer segmento que coincida con el inicio de los segmentos de ese día
+      // O si no hay segmentos (raro), buscamos por fecha
+      let startIndex = -1;
+
+      if (day.hourlySegments && day.hourlySegments.length > 0) {
+        const firstSegmentDt = day.hourlySegments[0].dt;
+        startIndex = this.originalWeatherData.hourly.findIndex(
+          (h: any) => h.dt === firstSegmentDt,
+        );
+      }
+
+      if (startIndex !== -1) {
+        // Tomamos 8 elementos desde ese punto (incluyendo horas del día siguiente si es necesario)
+        this.weatherData.hourly = this.originalWeatherData.hourly.slice(
+          startIndex,
+          startIndex + 8,
+        );
+      } else {
+        // Fallback
+        this.weatherData.hourly = day.hourlySegments || [];
+      }
+    }
   }
 }

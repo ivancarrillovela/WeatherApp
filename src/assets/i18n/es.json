@@ -3,7 +3,8 @@
     "TIMELINE": "Línea de tiempo",
     "FORECAST_TITLE": "Pronóstico de 5 días",
     "LOADING": "Cargando clima...",
-    "SEARCH_PLACEHOLDER": "Buscar ciudad..."
+    "SEARCH_PLACEHOLDER": "Buscar ciudad...",
+    "TODAY": "Hoy"
   },
   "WEATHER": {
     "WIND": "Viento",

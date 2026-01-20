@@ -69,6 +69,17 @@
         <ion-col size-xs="12" size-md="5" size-lg="5" class="left-col">
           <!-- HERO SECTION -->
           <div class="hero-section ion-text-center">
+            <!-- Dynamic Date Title -->
+            <h3 class="date-title">
+              <ng-container *ngIf="!displayDate">
+                {{ 'HOME.TODAY' | translate }}
+              </ng-container>
+              <ng-container *ngIf="displayDate">
+                {{ displayDate * 1000 | date: 'EEEE, d MMMM' : undefined :
+                currentLang | titlecase }}
+              </ng-container>
+            </h3>
+
             <h2 class="city-name">
               {{ weatherData.current.name || (citySearch | uppercase) }}
             </h2>
@@ -109,22 +120,25 @@
                   <div class="full-width">
                     <div class="flex-between-center">
                       <span>
-                        {{ weatherData.current.uvi | number:'1.0-0' }}
+                        {{ weatherData.current.uvi !== null ?
+                        (weatherData.current.uvi | number:'1.0-0') : 'N/A' }}
                       </span>
                       <span
                         class="badge {{ getUVClass(weatherData.current.uvi) }}"
-                        *ngIf="weatherData.current.uvi"
+                        *ngIf="weatherData.current.uvi !== null"
                       >
                         {{ 'WEATHER.UV_LEVEL.' +
                         getUVClass(weatherData.current.uvi).toUpperCase() |
                         translate }}
                       </span>
-                      <span class="badge low" *ngIf="!weatherData.current.uvi"
+                      <span
+                        class="badge low"
+                        *ngIf="weatherData.current.uvi === null"
                         >N/A</span
                       >
                     </div>
                     <ion-progress-bar
-                      [value]="weatherData.current.uvi / 11"
+                      [value]="(weatherData.current.uvi || 0) / 11"
                       [color]="getUVColor(weatherData.current.uvi)"
                     ></ion-progress-bar>
                   </div>
@@ -136,29 +150,38 @@
                 <app-weather-detail-card
                   [title]="'WEATHER.WIND' | translate"
                   icon="navigate"
-                  [iconColor]="getWindStatus(weatherData.current.wind_speed).color"
+                  [iconColor]="weatherData.current.wind_speed !== null ? getWindStatus(weatherData.current.wind_speed).color : 'medium'"
                   [iconRotation]="weatherData.current.wind_deg || 0"
                 >
                   <div class="full-width">
-                    <div class="flex-between-center">
-                      <span class="wind-value-nowrap">
-                        {{ weatherData.current.wind_speed | number:'1.0-0' }}
-                        <span class="wind-unit-small"
-                          >{{ (currentUnit === 'imperial' ? 'WEATHER.MPH' :
-                          'WEATHER.KPH') | translate }}</span
+                    <ng-container
+                      *ngIf="weatherData.current.wind_speed !== null"
+                    >
+                      <div class="flex-between-center">
+                        <span class="wind-value-nowrap">
+                          {{ weatherData.current.wind_speed | number:'1.0-0' }}
+                          <span class="wind-unit-small"
+                            >{{ (currentUnit === 'imperial' ? 'WEATHER.MPH' :
+                            'WEATHER.KPH') | translate }}</span
+                          >
+                        </span>
+                        <span
+                          class="badge {{ getWindStatus(weatherData.current.wind_speed).cssClass }}"
                         >
-                      </span>
-                      <span
-                        class="badge {{ getWindStatus(weatherData.current.wind_speed).cssClass }}"
-                      >
-                        {{ getWindStatus(weatherData.current.wind_speed).key |
-                        translate }}
-                      </span>
-                    </div>
-                    <ion-progress-bar
-                      [value]="getWindStatus(weatherData.current.wind_speed).value"
-                      [color]="getWindStatus(weatherData.current.wind_speed).color"
-                    ></ion-progress-bar>
+                          {{ getWindStatus(weatherData.current.wind_speed).key |
+                          translate }}
+                        </span>
+                      </div>
+                      <ion-progress-bar
+                        [value]="getWindStatus(weatherData.current.wind_speed).value"
+                        [color]="getWindStatus(weatherData.current.wind_speed).color"
+                      ></ion-progress-bar>
+                    </ng-container>
+                    <span
+                      *ngIf="weatherData.current.wind_speed === null"
+                      style="font-size: 1.5rem"
+                      >N/A</span
+                    >
                   </div>
                 </app-weather-detail-card>
               </ion-col>
@@ -170,8 +193,15 @@
                   icon="water"
                   iconColor="primary"
                 >
-                  {{ (weatherData.current.pop * 100) | number:'1.0-0' }}
-                  <span style="font-size: 1rem; opacity: 0.7">%</span>
+                  <ng-container *ngIf="weatherData.current.pop !== null">
+                    {{ (weatherData.current.pop * 100) | number:'1.0-0' }}
+                    <span style="font-size: 1rem; opacity: 0.7">%</span>
+                  </ng-container>
+                  <span
+                    *ngIf="weatherData.current.pop === null"
+                    style="font-size: 1.5rem"
+                    >N/A</span
+                  >
                 </app-weather-detail-card>
               </ion-col>
 
@@ -182,8 +212,15 @@
                   icon="cloud"
                   iconColor="medium"
                 >
-                  {{ weatherData.current.clouds }}
-                  <span style="font-size: 1rem; opacity: 0.7">%</span>
+                  <ng-container *ngIf="weatherData.current.clouds !== null">
+                    {{ weatherData.current.clouds }}
+                    <span style="font-size: 1rem; opacity: 0.7">%</span>
+                  </ng-container>
+                  <span
+                    *ngIf="weatherData.current.clouds === null"
+                    style="font-size: 1.5rem"
+                    >N/A</span
+                  >
                 </app-weather-detail-card>
               </ion-col>
 
@@ -194,7 +231,14 @@
                   icon="thermometer"
                   iconColor="danger"
                 >
-                  {{ weatherData.current.feels_like | number:'1.0-0' }}°
+                  <ng-container *ngIf="weatherData.current.feels_like !== null">
+                    {{ weatherData.current.feels_like | number:'1.0-0' }}°
+                  </ng-container>
+                  <span
+                    *ngIf="weatherData.current.feels_like === null"
+                    style="font-size: 1.5rem"
+                    >N/A</span
+                  >
                 </app-weather-detail-card>
               </ion-col>
 
@@ -205,7 +249,14 @@
                   icon="moon"
                   iconColor="warning"
                 >
-                  {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
+                  <ng-container *ngIf="weatherData.current.sunset">
+                    {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
+                  </ng-container>
+                  <span
+                    *ngIf="!weatherData.current.sunset"
+                    style="font-size: 1.5rem"
+                    >N/A</span
+                  >
                 </app-weather-detail-card>
               </ion-col>
             </ion-row>
@@ -227,7 +278,7 @@
 
           <!-- HOURLY -->
           <app-hourly-breakdown
-            [hourlyForecast]="weatherData.hourly | slice:0:12"
+            [hourlyForecast]="weatherData.hourly | slice:0:8"
           ></app-hourly-breakdown>
 
           <div class="section-title ion-margin-top">
@@ -236,6 +287,8 @@
 
           <app-forecast-list
             [dailyForecast]="weatherData.daily | slice:0:5"
+            [selectedDayId]="selectedDayId"
+            (daySelected)="onDaySelected($event)"
           ></app-forecast-list>
         </ion-col>
       </ion-row>

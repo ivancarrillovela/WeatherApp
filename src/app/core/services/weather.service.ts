@@ -200,8 +200,9 @@ export class WeatherService {
     const dailyMap = new Map<string, any>();
     const hourlyList = [];
 
-    // Por Hora: Tomar los primeros 8 elementos (approx 24h)
-    for (let i = 0; i < Math.min(forecast.list.length, 8); i++) {
+    // Por Hora: Procesar TODA la lista para permitir "rolling window" en la UI
+    // La vista por defecto limitará esto con slice, pero necesitamos los datos completos disponibles.
+    for (let i = 0; i < forecast.list.length; i++) {
       const item = forecast.list[i];
       hourlyList.push({
         dt: item.dt,
@@ -231,35 +232,86 @@ export class WeatherService {
           weather: item.weather[0], // Tomar el primer estado del clima
           humidity: [],
           wind_speed: [],
+          wind_entries: [], // Para calcular dirección dominante
           pop: [], // Array para probabilidad de lluvia
+          clouds: [],
+          feels_like: [],
+          pressure: [],
         });
       }
       const day = dailyMap.get(date);
       day.temp_min = Math.min(day.temp_min, item.main.temp_min);
       day.temp_max = Math.max(day.temp_max, item.main.temp_max);
       if (item.main.humidity) day.humidity.push(item.main.humidity);
-      if (item.wind && item.wind.speed) day.wind_speed.push(item.wind.speed);
+      if (item.wind && item.wind.speed !== undefined) {
+        day.wind_speed.push(item.wind.speed);
+        day.wind_entries.push({ speed: item.wind.speed, deg: item.wind.deg });
+      }
+      if (item.clouds && item.clouds.all !== undefined)
+        day.clouds.push(item.clouds.all);
       if (item.pop !== undefined) day.pop.push(item.pop);
+      if (item.main.feels_like !== undefined)
+        day.feels_like.push(item.main.feels_like);
+      if (item.main.pressure !== undefined)
+        day.pressure.push(item.main.pressure);
+
+      // Guardar segmento horario para desglose
+      if (!day.hourlySegments) day.hourlySegments = [];
+      day.hourlySegments.push({
+        dt: item.dt,
+        temp: item.main.temp,
+        weather: item.weather,
+        wind_speed: item.wind ? item.wind.speed : 0,
+        pop: item.pop || 0,
+      });
     });
 
     const dailyList = Array.from(dailyMap.values())
       .map((day) => {
         // Calcular Viento Máximo
-        let maxWind = day.wind_speed.length ? Math.max(...day.wind_speed) : 0;
+        let maxWind = day.wind_speed.length
+          ? Math.max(...day.wind_speed)
+          : null;
+
+        // Calcular Dirección del Viento Dominante (del momento de más viento)
+        let dominantDeg = null;
+        if (day.wind_entries && day.wind_entries.length > 0) {
+          const maxWindEntry = day.wind_entries.reduce(
+            (prev: any, current: any) =>
+              prev.speed > current.speed ? prev : current,
+          );
+          dominantDeg = maxWindEntry.deg;
+        }
+
+        // Calcular Presión Promedio
+        const avgPressure = day.pressure.length
+          ? Math.round(
+              day.pressure.reduce((a: number, b: number) => a + b, 0) /
+                day.pressure.length,
+            )
+          : null;
+
+        // Calcular Sensación Térmica Promedio
+        const avgFeelsLike = day.feels_like.length
+          ? Math.round(
+              day.feels_like.reduce((a: number, b: number) => a + b, 0) /
+                day.feels_like.length,
+            )
+          : null;
 
         // Conversión de viento si es metric (m/s -> km/h)
-        if (units === 'metric') {
+        if (units === 'metric' && maxWind !== null) {
           maxWind = maxWind * 3.6;
         }
 
         // Calcular Probabilidad de Lluvia Máxima (Estilo Google/Estándar)
         // Si a cualquier hora del día la probabilidad es alta, el día tiene riesgo alto.
-        const maxPop = day.pop.length ? Math.max(...day.pop) : 0;
+        const maxPop = day.pop.length ? Math.max(...day.pop) : null;
 
         return {
           dt: day.dt,
-          sunrise: 0,
-          sunset: 0,
+          sunrise: null,
+          sunset: null,
           temp: {
             day: (day.temp_max + day.temp_min) / 2,
             min: day.temp_min,
@@ -268,19 +320,26 @@ export class WeatherService {
             eve: day.temp_max,
             morn: day.temp_min,
           },
-          feels_like: { day: 0, night: 0, eve: 0, morn: 0 },
-          pressure: 0,
+          feels_like: { day: avgFeelsLike, night: 0, eve: 0, morn: 0 },
+          pressure: avgPressure,
           humidity: day.humidity.length
             ? day.humidity.reduce((a: number, b: number) => a + b, 0) /
               day.humidity.length
-            : 0,
-          dew_point: 0,
+            : null,
+          visibility: null,
+          dew_point: null,
           wind_speed: maxWind,
-          wind_deg: 0,
+          wind_deg: dominantDeg,
           weather: [day.weather],
-          clouds: 0,
+          clouds: day.clouds.length
+            ? Math.round(
+                day.clouds.reduce((a: number, b: number) => a + b, 0) /
+                  day.clouds.length,
+              )
+            : null,
           pop: maxPop,
-          uvi: 0,
+          hourlySegments: day.hourlySegments || [],
+          uvi: null,
         };
       })
       .slice(0, 5); // Consolidar a los primeros 5 días
