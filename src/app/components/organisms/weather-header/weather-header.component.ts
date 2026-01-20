@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { locate } from 'ionicons/icons';
 
 @Component({
   selector: 'app-weather-header',
@@ -24,6 +26,10 @@ export class WeatherHeaderComponent {
   @Output() toggleLang = new EventEmitter<void>();
   @Output() requestLocation = new EventEmitter<void>();
   @Output() citySortSelected = new EventEmitter<any>();
+
+  constructor() {
+    addIcons({ locate });
+  }
 
   onSearchChange(value: string) {
     this.citySearch = value;
