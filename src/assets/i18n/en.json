@@ -20,6 +20,8 @@
     },
     "HUMIDITY": "Humidity",
     "VISIBILITY": "Visibility",
+    "FEELS_LIKE": "Feels Like",
+    "CLOUDINESS": "Cloudiness",
     "SUNSET": "Sunset",
     "PRECIPITATION": "Precipitation",
     "UV_LEVEL": {

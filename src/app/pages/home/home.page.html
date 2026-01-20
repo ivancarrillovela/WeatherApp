@@ -185,6 +185,29 @@
                   {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
                 </app-weather-detail-card>
               </ion-col>
+
+              <!-- Feels Like Card (New Row Left) -->
+              <ion-col size="6" class="ion-padding-vertical pad-right-6">
+                <app-weather-detail-card
+                  [title]="'WEATHER.FEELS_LIKE' | translate"
+                  icon="thermometer"
+                  iconColor="danger"
+                >
+                  {{ weatherData.current.feels_like | number:'1.0-0' }}°
+                </app-weather-detail-card>
+              </ion-col>
+
+              <!-- Cloudiness Card (New Row Right) -->
+              <ion-col size="6" class="ion-padding-vertical pad-left-6">
+                <app-weather-detail-card
+                  [title]="'WEATHER.CLOUDINESS' | translate"
+                  icon="cloud"
+                  iconColor="medium"
+                >
+                  {{ weatherData.current.clouds }}
+                  <span style="font-size: 1rem; opacity: 0.7">%</span>
+                </app-weather-detail-card>
+              </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>

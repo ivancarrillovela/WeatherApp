@@ -26,7 +26,15 @@ import {
 } from '@ionic/angular/standalone';
 import { WeatherService } from 'src/app/core/services/weather.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { sunny, navigate, locate, water, moon } from 'ionicons/icons';
+import {
+  sunny,
+  navigate,
+  locate,
+  water,
+  moon,
+  thermometer,
+  cloud,
+} from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { WeatherIconComponent } from 'src/app/components/atoms/weather-icon/weather-icon.component';
 import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
@@ -87,7 +95,7 @@ export class HomePage implements OnInit {
   showSuggestions: boolean = false;
 
   constructor() {
-    addIcons({ sunny, navigate, locate, water, moon });
+    addIcons({ sunny, navigate, locate, water, moon, thermometer, cloud });
   }
 
   ngOnInit() {
