@@ -102,102 +102,96 @@
           <ion-grid class="ion-no-padding ion-margin-top api-details">
             <ion-row>
               <ion-col size="6" class="ion-padding-end">
-                <div class="glass-card detail-card">
-                  <div class="card-header">
-                    <ion-icon name="sunny" color="warning"></ion-icon>
-                    <span>{{ 'WEATHER.UV' | translate }}</span>
-                  </div>
-                  <div class="card-value">
-                    {{ weatherData.current.uvi ? weatherData.current.uvi : '' }}
-                    <span
-                      class="badge"
-                      [ngClass]="{'high': weatherData.current.uvi > 5, 'low': weatherData.current.uvi <= 5}"
-                      *ngIf="weatherData.current.uvi"
+                <app-weather-detail-card
+                  [title]="'WEATHER.UV' | translate"
+                  icon="sunny"
+                  [iconColor]="getUVColor(weatherData.current.uvi)"
+                >
+                  <div style="width: 100%">
+                    <div
+                      style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 4px;
+                      "
                     >
-                      {{ (weatherData.current.uvi > 5 ? 'WEATHER.HIGH' :
-                      'WEATHER.LOW') | translate }}
-                    </span>
-                    <span class="badge low" *ngIf="!weatherData.current.uvi"
-                      >N/A</span
-                    >
+                      <span
+                        >{{ weatherData.current.uvi | number:'1.0-0' }}</span
+                      >
+                      <span
+                        class="badge {{ getUVClass(weatherData.current.uvi) }}"
+                        *ngIf="weatherData.current.uvi"
+                      >
+                        {{ (weatherData.current.uvi > 5 ? 'WEATHER.HIGH' :
+                        'WEATHER.LOW') | translate }}
+                      </span>
+                      <span class="badge low" *ngIf="!weatherData.current.uvi"
+                        >N/A</span
+                      >
+                    </div>
+                    <ion-progress-bar
+                      [value]="weatherData.current.uvi / 11"
+                      [color]="getUVColor(weatherData.current.uvi)"
+                    ></ion-progress-bar>
                   </div>
-                  <ion-progress-bar
-                    [value]="weatherData.current.uvi / 11"
-                    [color]="getUVColor(weatherData.current.uvi)"
-                  ></ion-progress-bar>
-                </div>
+                </app-weather-detail-card>
               </ion-col>
               <ion-col size="6" class="ion-padding-start">
-                <div class="glass-card detail-card">
-                  <div class="card-header">
-                    <ion-icon name="navigate" color="tertiary"></ion-icon>
-                    <span>{{ 'WEATHER.WIND' | translate }}</span>
-                  </div>
-                  <div class="wind-circle">
+                <app-weather-detail-card
+                  [title]="'WEATHER.WIND' | translate"
+                  icon="navigate"
+                  [iconColor]="getWindStatus(weatherData.current.wind_speed).color"
+                >
+                  <div style="width: 100%">
                     <div
-                      class="arrow"
-                      [style.transform]="'rotate(' + (weatherData.current.wind_deg || 0) + 'deg)'"
+                      style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 4px;
+                      "
                     >
-                      ➤
-                    </div>
-                    <div class="speed" style="color: white">
-                      {{ weatherData.current.wind_speed | number:'1.0-0' }}
-                      <span class="unit">
-                        {{ (currentUnit === 'imperial' ? 'WEATHER.MPH' :
-                        'WEATHER.KPH') | translate }}
-                      </span>
-
-                      <!-- Wind Level Badge -->
                       <span
-                        class="badge"
-                        [ngClass]="getWindStatus(weatherData.current.wind_speed).cssClass"
-                        style="
-                          margin-left: 8px;
-                          font-size: 0.7rem;
-                          vertical-align: middle;
-                        "
+                        >{{ getWindStatus(weatherData.current.wind_speed).value
+                        * 100 | number:'1.0-0' }} km/h</span
+                      >
+                      <span
+                        class="badge {{ getWindStatus(weatherData.current.wind_speed).cssClass }}"
                       >
                         {{ getWindStatus(weatherData.current.wind_speed).key |
                         translate }}
                       </span>
                     </div>
-
-                    <!-- Direction text could be complex to translate dynamically without logic, simplifying for now or kept static -->
+                    <ion-progress-bar
+                      [value]="getWindStatus(weatherData.current.wind_speed).value"
+                      [color]="getWindStatus(weatherData.current.wind_speed).color"
+                    ></ion-progress-bar>
                   </div>
-                  <ion-progress-bar
-                    [value]="getWindStatus(weatherData.current.wind_speed).value"
-                    [color]="getWindStatus(weatherData.current.wind_speed).color"
-                  ></ion-progress-bar>
-                </div>
+                </app-weather-detail-card>
               </ion-col>
             </ion-row>
 
             <!-- EXTRA ROW: Humidity & Visibility -->
             <ion-row class="ion-margin-top">
               <ion-col size="6" class="ion-padding-end">
-                <div class="glass-card detail-card">
-                  <div class="card-header">
-                    <ion-icon name="rainy" color="primary"></ion-icon>
-                    <span>{{ 'WEATHER.PRECIPITATION' | translate }}</span>
-                  </div>
-                  <div class="card-value">
-                    {{ (weatherData.hourly[0].pop * 100) | number:'1.0-0' }}
-                    <span style="font-size: 1rem; opacity: 0.7">%</span>
-                  </div>
-                  <div style="height: 4px"></div>
-                </div>
+                <app-weather-detail-card
+                  [title]="'WEATHER.HUMIDITY' | translate"
+                  icon="water"
+                  iconColor="primary"
+                >
+                  {{ weatherData.current.humidity }}
+                  <span style="font-size: 1rem; opacity: 0.7">%</span>
+                </app-weather-detail-card>
               </ion-col>
               <ion-col size="6" class="ion-padding-start">
-                <div class="glass-card detail-card">
-                  <div class="card-header">
-                    <ion-icon name="moon" color="warning"></ion-icon>
-                    <span>{{ 'WEATHER.SUNSET' | translate }}</span>
-                  </div>
-                  <div class="card-value">
-                    {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
-                  </div>
-                  <div style="height: 4px"></div>
-                </div>
+                <app-weather-detail-card
+                  [title]="'WEATHER.SUNSET' | translate"
+                  icon="moon"
+                  iconColor="warning"
+                >
+                  {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
+                </app-weather-detail-card>
               </ion-col>
             </ion-row>
           </ion-grid>
