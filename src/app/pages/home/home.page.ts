@@ -116,12 +116,13 @@ export class HomePage implements OnInit {
     ])
       .pipe(debounceTime(50))
       .subscribe(([lang, unit]) => {
+        const preserveDayId = this.selectedDayId; // Capturar día seleccionado actual antes de actualizar
         this.currentLang = lang;
         this.currentUnit = unit;
 
         if (this.weatherData) {
           const { lat, lon } = this.weatherData;
-          this.loadWeather(lat, lon);
+          this.loadWeather(lat, lon, preserveDayId);
         } else {
           // Carga inicial si no hay datos
           this.getCurrentLocation();
@@ -197,15 +198,25 @@ export class HomePage implements OnInit {
     this.settingsService.setLanguage(newLang);
   }
 
-  loadWeather(lat: number, lon: number) {
+  loadWeather(lat: number, lon: number, restoreDayId: number | null = null) {
     this.weatherService
       .getWeather(lat, lon, this.currentUnit, this.currentLang)
       .subscribe({
         next: (data) => {
-          this.originalWeatherData = JSON.parse(JSON.stringify(data)); // Deep copy to preserve state
-          this.weatherData = data;
-          this.selectedDayId = null; // Reset selection
-          this.displayDate = null; // Reset date title
+          this.handleWeatherUpdate(data);
+
+          // Restaurar selección si existía
+          if (restoreDayId && this.originalWeatherData?.daily) {
+            const foundDay = this.originalWeatherData.daily.find(
+              (d: any) => d.dt === restoreDayId,
+            );
+            if (foundDay) {
+              // Necesitamos re-ejecutar la lógica de selección para transformar los datos
+              // Primero nos aseguramos de que no esté seleccionado para evitar el "toggle" de onDaySelected
+              this.selectedDayId = null;
+              this.onDaySelected(foundDay);
+            }
+          }
         },
         error: (err) => console.error(err),
       });
@@ -252,14 +263,19 @@ export class HomePage implements OnInit {
       this.weatherService
         .getWeatherByCity(this.citySearch, this.currentUnit, this.currentLang)
         .subscribe({
-          next: (data) => {
-            this.weatherData = data;
-          },
+          next: (data) => this.handleWeatherUpdate(data),
           error: (err) => {
             console.error(err);
           },
         });
     }
+  }
+
+  private handleWeatherUpdate(data: any) {
+    this.originalWeatherData = JSON.parse(JSON.stringify(data)); // Deep copy to preserve state
+    this.weatherData = data;
+    this.selectedDayId = null; // Reset selection
+    this.displayDate = null; // Reset date title
   }
 
   // Ayudante para UI de Índice UV
