@@ -284,10 +284,17 @@
 
 .flex-between-center {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* Stack vertically on mobile */
+    justify-content: center;
     align-items: center;
     margin-bottom: 4px;
-    gap: 12px; /* Increased constraint for "breathing room" */
+    gap: 4px;
+
+    @media (min-width: 768px) {
+        flex-direction: row; /* Restoration to row on desktop */
+        justify-content: space-between;
+        gap: 12px;
+    }
 }
 
 .wind-value-nowrap {
