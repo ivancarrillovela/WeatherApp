@@ -37,32 +37,108 @@
         <ion-icon
           slot="icon-only"
           name="locate"
-          style="color: white !important"
           class="location-icon"
+          *ngIf="!loadingLocation"
+        ></ion-icon>
+        <ion-spinner name="crescent" *ngIf="loadingLocation"></ion-spinner>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-...
+<ion-content [fullscreen]="true">
+  <!-- Suggestions Dropdown (Floating) -->
+  @if (showSuggestions && citySuggestions.length > 0) {
+  <div class="suggestions-container">
+    <ion-list lines="none" class="glass-list">
+      @for (city of citySuggestions; track city.lat) {
+      <ion-item button (click)="selectCity(city)" detail="false">
+        <ion-label>
+          <h3>{{ city.name }}</h3>
+          <p>{{ city.state ? city.state + ', ' : '' }}{{ city.country }}</p>
+        </ion-label>
+      </ion-item>
+      }
+    </ion-list>
+  </div>
+  } @if (weatherData) {
+  <div class="main-container ion-padding">
+    <ion-grid>
+      <ion-row class="desktop-split">
+        <!-- LEFT COLUMN: Hero & Current Details (Center/Left on Desktop) -->
+        <ion-col size-xs="12" size-md="5" size-lg="5" class="left-col">
+          <!-- HERO SECTION -->
+          <div class="hero-section ion-text-center">
+            <h2 class="city-name">
+              {{ weatherData.current.name || (citySearch | uppercase) }}
+            </h2>
+            <div class="temperature-container">
+              <h1 class="main-temp">
+                {{ weatherData.current.temp | number:'1.0-0' }}°
+              </h1>
+            </div>
 
-              <!-- UV Card (Top Left) -->
-              <ion-col
-                size="6"
-                class="ion-padding-vertical pad-right-6"
+            <div class="condition-container">
+              <app-weather-icon
+                [iconCode]="weatherData.current.weather[0].icon"
+                class="hero-icon"
+              ></app-weather-icon>
+              <span class="condition-text"
+                >{{ weatherData.current.weather[0].description | titlecase
+                }}</span
               >
+            </div>
 
-...
+            <div class="high-low">
+              {{ 'WEATHER.HIGH' | translate }}: {{ weatherData.daily[0].temp.max
+              | number:'1.0-0' }}° | {{ 'WEATHER.LOW' | translate }}: {{
+              weatherData.daily[0].temp.min | number:'1.0-0' }}°
+            </div>
+          </div>
 
+          <!-- DETAILS GRID -->
+          <ion-grid class="ion-no-padding ion-margin-top api-details">
+            <ion-row>
+              <!-- UV Card (Top Left) -->
+              <ion-col size="6" class="ion-padding-vertical pad-right-6">
+                <app-weather-detail-card
+                  [title]="'WEATHER.UV' | translate"
+                  icon="sunny"
+                  [iconColor]="getUVColor(weatherData.current.uvi)"
+                >
                   <div class="full-width">
                     <div class="flex-between-center">
-
-...
+                      <span>
+                        {{ weatherData.current.uvi | number:'1.0-0' }}
+                      </span>
+                      <span
+                        class="badge {{ getUVClass(weatherData.current.uvi) }}"
+                        *ngIf="weatherData.current.uvi"
+                      >
+                        {{ 'WEATHER.UV_LEVEL.' +
+                        getUVClass(weatherData.current.uvi).toUpperCase() |
+                        translate }}
+                      </span>
+                      <span class="badge low" *ngIf="!weatherData.current.uvi"
+                        >N/A</span
+                      >
+                    </div>
+                    <ion-progress-bar
+                      [value]="weatherData.current.uvi / 11"
+                      [color]="getUVColor(weatherData.current.uvi)"
+                    ></ion-progress-bar>
+                  </div>
+                </app-weather-detail-card>
+              </ion-col>
 
               <!-- Wind Card (Top Right) -->
-              <ion-col
-                size="6"
-                class="ion-padding-vertical pad-left-6"
-              >
-
-...
-
+              <ion-col size="6" class="ion-padding-vertical pad-left-6">
+                <app-weather-detail-card
+                  [title]="'WEATHER.WIND' | translate"
+                  icon="navigate"
+                  [iconColor]="getWindStatus(weatherData.current.wind_speed).color"
+                  [iconRotation]="weatherData.current.wind_deg || 0"
+                >
                   <div class="full-width">
                     <div class="flex-between-center">
                       <span class="wind-value-nowrap">
@@ -72,29 +148,78 @@
                           'WEATHER.KPH') | translate }}</span
                         >
                       </span>
-
-...
+                      <span
+                        class="badge {{ getWindStatus(weatherData.current.wind_speed).cssClass }}"
+                      >
+                        {{ getWindStatus(weatherData.current.wind_speed).key |
+                        translate }}
+                      </span>
+                    </div>
+                    <ion-progress-bar
+                      [value]="getWindStatus(weatherData.current.wind_speed).value"
+                      [color]="getWindStatus(weatherData.current.wind_speed).color"
+                    ></ion-progress-bar>
+                  </div>
+                </app-weather-detail-card>
+              </ion-col>
 
               <!-- Humidity Card (Bottom Left) -->
-              <ion-col
-                size="6"
-                class="ion-padding-vertical pad-right-6"
-              >
-
-...
+              <ion-col size="6" class="ion-padding-vertical pad-right-6">
+                <app-weather-detail-card
+                  [title]="'WEATHER.HUMIDITY' | translate"
+                  icon="water"
+                  iconColor="primary"
+                >
+                  {{ weatherData.current.humidity }}
+                  <span style="font-size: 1rem; opacity: 0.7">%</span>
+                </app-weather-detail-card>
+              </ion-col>
 
               <!-- Sunset Card (Bottom Right) -->
-              <ion-col
-                size="6"
-                class="ion-padding-vertical pad-left-6"
-              >
+              <ion-col size="6" class="ion-padding-vertical pad-left-6">
+                <app-weather-detail-card
+                  [title]="'WEATHER.SUNSET' | translate"
+                  icon="moon"
+                  iconColor="warning"
+                >
+                  {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
+                </app-weather-detail-card>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
 
-...
+        <!-- RIGHT COLUMN: Timeline & Forecast (Right on Desktop) -->
+        <ion-col
+          size-xs="12"
+          size-md="7"
+          size-lg="6"
+          offset-lg="1"
+          class="right-col"
+        >
+          <!-- SECTIONS -->
+          <div class="section-title">
+            <span>{{ 'HOME.TIMELINE' | translate }}</span>
+          </div>
 
+          <!-- HOURLY -->
+          <app-hourly-breakdown
+            [hourlyForecast]="weatherData.hourly | slice:0:12"
+          ></app-hourly-breakdown>
+
+          <div class="section-title ion-margin-top">
+            <span>{{ 'HOME.FORECAST_TITLE' | translate }}</span>
+          </div>
+
+          <app-forecast-list
+            [dailyForecast]="weatherData.daily | slice:0:5"
+          ></app-forecast-list>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
   } @else {
-  <div
-    class="ion-text-center ion-padding loading-container"
-  >
+  <div class="ion-text-center ion-padding loading-container">
     <p class="loading-text">{{ 'HOME.LOADING' | translate }}</p>
     <ion-spinner color="light"></ion-spinner>
   </div>
