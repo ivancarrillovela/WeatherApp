@@ -28,6 +28,15 @@
     }
 }
 
+/* Main Toolbar (Glass Effect) */
+.main-toolbar {
+    --background: rgba(30, 40, 60, 0.85); /* Semi-transparent dark background */
+    --border-style: none; /* Remove default border */
+    backdrop-filter: blur(12px); /* Blur effect */
+    -webkit-backdrop-filter: blur(12px); /* Safari support */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 /* Search Bar Customization */
 .custom-searchbar {
   --background: rgba(255, 255, 255, 0.15);

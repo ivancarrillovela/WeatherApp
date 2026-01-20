@@ -6,7 +6,7 @@
     "SEARCH_PLACEHOLDER": "Search city..."
   },
   "WEATHER": {
-    "WIND": "Wind and Direction",
+    "WIND": "Wind",
     "UV": "UV Index",
     "HIGH": "High",
     "LOW": "Low",
