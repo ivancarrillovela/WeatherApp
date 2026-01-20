@@ -44,10 +44,7 @@ import { water, navigate } from 'ionicons/icons';
 
               <div class="meta-row">
                 <!-- Precipitation -->
-                <div
-                  class="meta-item"
-                  [style.opacity]="day.pop > 0 ? '1' : '0.3'"
-                >
+                <div class="meta-item" [class.faded-precip]="day.pop <= 0">
                   <ion-icon name="water" class="rain-icon"></ion-icon>
                   <span>{{ day.pop * 100 | number: '1.0-0' }}%</span>
                 </div>

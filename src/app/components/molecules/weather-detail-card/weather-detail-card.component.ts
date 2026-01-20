@@ -12,7 +12,7 @@ import { IonIcon } from '@ionic/angular/standalone';
         <ion-icon
           [name]="icon"
           [color]="iconColor"
-          [style.transform]="'rotate(' + iconRotation + 'deg)'"
+          [style.--rotation]="iconRotation + 'deg'"
           class="rotated-icon"
         ></ion-icon>
         <span>{{ title }}</span>
@@ -23,66 +23,7 @@ import { IonIcon } from '@ionic/angular/standalone';
       <div class="spacer-bottom"></div>
     </div>
   `,
-  styles: [
-    `
-      .glass-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: transform 0.2s;
-      }
-
-      .detail-card {
-        padding: 16px;
-        height: 100%; /* Asegurar altura completa en grid */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      .rotated-icon {
-        transition: transform 0.5s ease;
-      }
-
-      .spacer-bottom {
-        height: 4px;
-      }
-
-      .card-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-
-        ion-icon {
-          font-size: 1.2rem;
-          min-width: 1.2rem; /* Prevent icon shrinking */
-        }
-
-        span {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-
-      .card-value {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-    `,
-  ],
+  styleUrls: ['./weather-detail-card.component.scss'],
 })
 export class WeatherDetailCardComponent {
   @Input() title: string = '';

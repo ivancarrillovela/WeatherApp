@@ -179,7 +179,7 @@
                     </ng-container>
                     <span
                       *ngIf="weatherData.current.wind_speed === null"
-                      style="font-size: 1.5rem"
+                      class="na-text"
                       >N/A</span
                     >
                   </div>
@@ -195,11 +195,9 @@
                 >
                   <ng-container *ngIf="weatherData.current.pop !== null">
                     {{ (weatherData.current.pop * 100) | number:'1.0-0' }}
-                    <span style="font-size: 1rem; opacity: 0.7">%</span>
+                    <span class="unit-text">%</span>
                   </ng-container>
-                  <span
-                    *ngIf="weatherData.current.pop === null"
-                    style="font-size: 1.5rem"
+                  <span *ngIf="weatherData.current.pop === null" class="na-text"
                     >N/A</span
                   >
                 </app-weather-detail-card>
@@ -214,11 +212,11 @@
                 >
                   <ng-container *ngIf="weatherData.current.clouds !== null">
                     {{ weatherData.current.clouds }}
-                    <span style="font-size: 1rem; opacity: 0.7">%</span>
+                    <span class="unit-text">%</span>
                   </ng-container>
                   <span
                     *ngIf="weatherData.current.clouds === null"
-                    style="font-size: 1.5rem"
+                    class="na-text"
                     >N/A</span
                   >
                 </app-weather-detail-card>
@@ -236,7 +234,7 @@
                   </ng-container>
                   <span
                     *ngIf="weatherData.current.feels_like === null"
-                    style="font-size: 1.5rem"
+                    class="na-text"
                     >N/A</span
                   >
                 </app-weather-detail-card>
@@ -252,9 +250,7 @@
                   <ng-container *ngIf="weatherData.current.sunset">
                     {{ weatherData.current.sunset * 1000 | date:'HH:mm' }}
                   </ng-container>
-                  <span
-                    *ngIf="!weatherData.current.sunset"
-                    style="font-size: 1.5rem"
+                  <span *ngIf="!weatherData.current.sunset" class="na-text"
                     >N/A</span
                   >
                 </app-weather-detail-card>
