@@ -54,11 +54,7 @@ import { water, navigate } from 'ionicons/icons';
 
                 <!-- Wind -->
                 <div class="meta-item">
-                  <ion-icon
-                    name="navigate"
-                    class="wind-icon"
-                    [style.transform]="'rotate(' + (day.wind_deg || 0) + 'deg)'"
-                  ></ion-icon>
+                  <ion-icon name="navigate" class="wind-icon"></ion-icon>
                   <span>{{ day.wind_speed | number: '1.0-0' }}</span>
                 </div>
               </div>
