@@ -150,8 +150,8 @@
                       <!-- Wind Level Badge -->
                       <span
                         class="badge"
-                        [class.low]="getWindStatus(weatherData.current.wind_speed).color === 'success'"
-                        [class.high]="getWindStatus(weatherData.current.wind_speed).color !== 'success'"
+                        [class.low]="getWindStatus(weatherData.current.wind_speed).color === 'success' || getWindStatus(weatherData.current.wind_speed).color === 'warning'"
+                        [class.high]="getWindStatus(weatherData.current.wind_speed).color === 'danger'"
                         style="
                           margin-left: 8px;
                           font-size: 0.7rem;

@@ -155,16 +155,17 @@
         font-size: 2.5rem;
         font-weight: 400;
         
-        .badge {
-            font-size: 0.8rem;
-            padding: 4px 10px;
-            border-radius: 12px;
-            vertical-align: middle;
-            margin-left: 5px;
-            
-            &.high { background: var(--ion-color-primary); color: white; }
-            &.low { background: #48bb78; color: white; }
-        }
+    }
+    
+    .badge {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 12px;
+        vertical-align: middle;
+        margin-left: 5px;
+        
+        &.high { background: var(--ion-color-primary); color: white; }
+        &.low { background: #48bb78; color: white; }
     }
 }
 
