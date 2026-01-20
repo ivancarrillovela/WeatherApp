@@ -136,6 +136,29 @@ import { water, navigate } from 'ionicons/icons';
           }
         }
       }
+
+      @media (max-width: 768px) {
+        .forecast-row {
+          .condition-col {
+            gap: 6px; /* Reduced gap further */
+          }
+
+          .meta-row {
+            gap: 6px; /* Reduced gap further */
+          }
+
+          .meta-item {
+            width: 42px; /* Further reduced width */
+            font-size: 0.7rem; /* Smaller text */
+          }
+
+          .forecast-icon,
+          .rain-icon,
+          .wind-icon {
+            font-size: 1rem; /* Even smaller icons (1rem) */
+          }
+        }
+      }
     `,
   ],
 })
