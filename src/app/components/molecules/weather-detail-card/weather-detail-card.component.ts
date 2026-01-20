@@ -9,7 +9,12 @@ import { IonIcon } from '@ionic/angular/standalone';
   template: `
     <div class="glass-card detail-card">
       <div class="card-header">
-        <ion-icon [name]="icon" [color]="iconColor"></ion-icon>
+        <ion-icon
+          [name]="icon"
+          [color]="iconColor"
+          [style.transform]="'rotate(' + iconRotation + 'deg)'"
+          style="transition: transform 0.5s ease;"
+        ></ion-icon>
         <span>{{ title }}</span>
       </div>
       <div class="card-value">
@@ -68,4 +73,5 @@ export class WeatherDetailCardComponent {
   @Input() title: string = '';
   @Input() icon: string = '';
   @Input() iconColor: string = 'primary';
+  @Input() iconRotation: number = 0;
 }
