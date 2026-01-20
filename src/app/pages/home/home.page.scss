@@ -253,3 +253,49 @@
         top: 20px; /* Sticky sidebar effect on really tall screens */
     }
 }
+
+/* UTILITY CLASSES (Extraction from HTML) */
+.location-icon {
+    color: white !important;
+}
+
+.hero-icon {
+    font-size: 24px;
+}
+
+.pad-right-6 {
+    padding-right: 6px;
+}
+
+.pad-left-6 {
+    padding-left: 6px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.flex-between-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.wind-value-nowrap {
+    white-space: nowrap;
+}
+
+.wind-unit-small {
+    font-size: 0.7em;
+    opacity: 0.8;
+}
+
+.loading-container {
+    margin-top: 50vh;
+    transform: translateY(-50%);
+}
+
+.loading-text {
+    color: white;
+}

@@ -13,14 +13,14 @@ import { IonIcon } from '@ionic/angular/standalone';
           [name]="icon"
           [color]="iconColor"
           [style.transform]="'rotate(' + iconRotation + 'deg)'"
-          style="transition: transform 0.5s ease;"
+          class="rotated-icon"
         ></ion-icon>
         <span>{{ title }}</span>
       </div>
       <div class="card-value">
         <ng-content></ng-content>
       </div>
-      <div style="height: 4px;"></div>
+      <div class="spacer-bottom"></div>
     </div>
   `,
   styles: [
@@ -41,6 +41,14 @@ import { IonIcon } from '@ionic/angular/standalone';
         display: flex;
         flex-direction: column;
         justify-content: center;
+      }
+
+      .rotated-icon {
+        transition: transform 0.5s ease;
+      }
+
+      .spacer-bottom {
+        height: 4px;
       }
 
       .card-header {

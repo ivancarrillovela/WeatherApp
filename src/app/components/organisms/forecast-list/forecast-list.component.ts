@@ -23,7 +23,7 @@ import {
           <div class="condition">
             <app-weather-icon
               [iconCode]="day.weather[0].icon"
-              style="font-size: 1.5rem; vertical-align: middle;"
+              class="forecast-icon"
             ></app-weather-icon>
             <span class="precip" *ngIf="day.pop > 0"
               >{{ day.pop * 100 | number: '1.0-0' }}%</span
@@ -75,6 +75,11 @@ import {
             font-size: 0.75rem;
             color: #90cdf4; /* Azul claro para lluvia */
           }
+        }
+
+        .forecast-icon {
+          font-size: 1.5rem;
+          vertical-align: middle;
         }
 
         .temps {
