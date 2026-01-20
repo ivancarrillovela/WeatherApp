@@ -63,6 +63,13 @@ import { IonIcon } from '@ionic/angular/standalone';
 
         ion-icon {
           font-size: 1.2rem;
+          min-width: 1.2rem; /* Prevent icon shrinking */
+        }
+
+        span {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
 
