@@ -152,13 +152,17 @@
     }
 
     .card-value {
-        font-size: 2.5rem;
+        font-size: 1.8rem; /* Smaller for mobile */
+        @media (min-width: 768px) {
+            font-size: 2.5rem; /* Larger for desktop */
+        }
+        
         font-weight: 400;
         flex: 1; /* Take available space */
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 10px;
+        gap: 5px; /* Reduced gap slightly */
     }
     
     .badge {
@@ -189,7 +193,10 @@
     align-items: center;
 
     .arrow {
-        font-size: 2rem;
+        font-size: 1.6rem; /* Smaller on mobile */
+        @media (min-width: 768px) {
+            font-size: 2rem;
+        }
         color: var(--ion-color-tertiary);
         display: inline-block;
         margin-bottom: 5px;
