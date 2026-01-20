@@ -20,7 +20,7 @@ export class WeatherService {
     );
   }
 
-  // Buscar ciudades (Autocomplete) - API
+  // Buscar ciudades (Autocompletado) - API
   searchCities(query: string): Observable<any[]> {
     return this.http.get<any[]>(
       `${this.geoUrl}/direct?q=${query}&limit=5&appid=${this.apiKey}`,
@@ -193,7 +193,7 @@ export class WeatherService {
       wind_speed: windSpeed,
       wind_deg: current.wind.deg,
       weather: current.weather,
-      pop: forecast.list && forecast.list.length > 0 ? forecast.list[0].pop : 0, // Probabilidad de lluvia actual (de hourly)
+      pop: forecast.list && forecast.list.length > 0 ? forecast.list[0].pop : 0, // Probabilidad de lluvia actual (de pronóstico por hora)
     };
 
     // Procesar Pronóstico Diario y por Hora

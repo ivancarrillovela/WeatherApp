@@ -19,7 +19,7 @@ export class SettingsService {
 
   constructor() {
     this.translate.setDefaultLang('es');
-    this.setLanguage('es'); // Default
+    this.setLanguage('es'); // Por defecto
   }
 
   setLanguage(lang: AppLanguage) {

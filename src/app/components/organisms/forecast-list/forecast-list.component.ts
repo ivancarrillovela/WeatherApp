@@ -43,13 +43,13 @@ import { water, navigate } from 'ionicons/icons';
               ></app-weather-icon>
 
               <div class="meta-row">
-                <!-- Precipitation -->
+                <!-- Precipitación -->
                 <div class="meta-item" [class.faded-precip]="day.pop <= 0">
                   <ion-icon name="water" class="rain-icon"></ion-icon>
                   <span>{{ day.pop * 100 | number: '1.0-0' }}%</span>
                 </div>
 
-                <!-- Wind -->
+                <!-- Viento -->
                 <div class="meta-item">
                   <ion-icon name="navigate" class="wind-icon"></ion-icon>
                   <span>{{ day.wind_speed | number: '1.0-0' }}</span>
@@ -87,7 +87,7 @@ export class ForecastListComponent implements OnInit {
   }
 
   selectDay(day: any, index: number) {
-    // If active check (redundant with pointer-events but safe)
+    // Comprobación si está activo (redundante con pointer-events pero seguro)
     if (
       this.selectedDayId === day.dt ||
       (this.selectedDayId === null && index === 0)

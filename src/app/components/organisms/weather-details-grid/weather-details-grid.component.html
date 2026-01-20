@@ -1,0 +1,143 @@
+<ion-grid class="ion-no-padding ion-margin-top api-details">
+  <ion-row>
+    <!-- UV Card -->
+    <ion-col size="6" class="ion-padding-vertical pad-right-6">
+      <app-weather-detail-card
+        [title]="'WEATHER.UV' | translate"
+        icon="sunny"
+        [iconColor]="getUVColor(current.uvi)"
+      >
+        <div class="full-width">
+          <div class="flex-between-center">
+            <span>
+              {{
+                current.uvi !== null ? (current.uvi | number: "1.0-0") : "N/A"
+              }}
+            </span>
+            @if (current.uvi !== null) {
+              <app-status-badge [colorClass]="getUVClass(current.uvi)">
+                {{
+                  "WEATHER.UV_LEVEL." + getUVClass(current.uvi).toUpperCase()
+                    | translate
+                }}
+              </app-status-badge>
+            }
+            @if (current.uvi === null) {
+              <app-status-badge colorClass="low">N/A</app-status-badge>
+            }
+          </div>
+          <ion-progress-bar
+            [value]="(current.uvi || 0) / 11"
+            [color]="getUVColor(current.uvi)"
+          ></ion-progress-bar>
+        </div>
+      </app-weather-detail-card>
+    </ion-col>
+
+    <!-- Wind Card -->
+    <ion-col size="6" class="ion-padding-vertical pad-left-6">
+      <app-weather-detail-card
+        [title]="'WEATHER.WIND' | translate"
+        icon="navigate"
+        [iconColor]="
+          current.wind_speed !== null
+            ? getWindStatus(current.wind_speed).color
+            : 'medium'
+        "
+        [iconRotation]="current.wind_deg || 0"
+      >
+        <div class="full-width">
+          @if (current.wind_speed !== null) {
+            <div class="flex-between-center">
+              <span class="wind-value-nowrap">
+                {{ current.wind_speed | number: "1.0-0" }}
+                <span class="wind-unit-small">{{
+                  (currentUnit === "imperial" ? "WEATHER.MPH" : "WEATHER.KPH")
+                    | translate
+                }}</span>
+              </span>
+              <app-status-badge
+                [colorClass]="getWindStatus(current.wind_speed).cssClass"
+              >
+                {{ getWindStatus(current.wind_speed).key | translate }}
+              </app-status-badge>
+            </div>
+            <ion-progress-bar
+              [value]="getWindStatus(current.wind_speed).value"
+              [color]="getWindStatus(current.wind_speed).color"
+            ></ion-progress-bar>
+          }
+          @if (current.wind_speed === null) {
+            <span class="na-text">N/A</span>
+          }
+        </div>
+      </app-weather-detail-card>
+    </ion-col>
+
+    <!-- Precipitation Card -->
+    <ion-col size="6" class="ion-padding-vertical pad-right-6">
+      <app-weather-detail-card
+        [title]="'WEATHER.PRECIPITATION' | translate"
+        icon="water"
+        iconColor="primary"
+      >
+        @if (current.pop !== null) {
+          {{ current.pop * 100 | number: "1.0-0" }}
+          <span class="unit-text">%</span>
+        }
+        @if (current.pop === null) {
+          <span class="na-text">N/A</span>
+        }
+      </app-weather-detail-card>
+    </ion-col>
+
+    <!-- Cloudiness Card -->
+    <ion-col size="6" class="ion-padding-vertical pad-left-6">
+      <app-weather-detail-card
+        [title]="'WEATHER.CLOUDINESS' | translate"
+        icon="cloud"
+        iconColor="medium"
+      >
+        @if (current.clouds !== null) {
+          {{ current.clouds }}
+          <span class="unit-text">%</span>
+        }
+        @if (current.clouds === null) {
+          <span class="na-text">N/A</span>
+        }
+      </app-weather-detail-card>
+    </ion-col>
+
+    <!-- Feels Like Card -->
+    <ion-col size="6" class="ion-padding-vertical pad-right-6">
+      <app-weather-detail-card
+        [title]="'WEATHER.FEELS_LIKE' | translate"
+        icon="thermometer"
+        iconColor="danger"
+      >
+        @if (current.feels_like !== null) {
+          {{ current.feels_like | number: "1.0-0" }}°
+        }
+        @if (current.feels_like === null) {
+          <span class="na-text">N/A</span>
+        }
+      </app-weather-detail-card>
+    </ion-col>
+
+    <!-- Sunset Card -->
+    <ion-col size="6" class="ion-padding-vertical pad-left-6">
+      <app-weather-detail-card
+        [title]="'WEATHER.SUNSET' | translate"
+        icon="moon"
+        iconColor="warning"
+      >
+        @if (current.sunset) {
+          {{ current.sunset * 1000 | date: "HH:mm" }}
+        }
+        @if (!current.sunset) {
+          <span class="na-text">N/A</span>
+        }
+      </app-weather-detail-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>

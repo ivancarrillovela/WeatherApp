@@ -4,14 +4,8 @@ import { FormsModule } from '@angular/forms';
 import {
   IonHeader,
   IonToolbar,
-  IonTitle,
   IonContent,
   IonSearchbar,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonCardContent,
   IonSpinner,
   IonButton,
   IonIcon,
@@ -19,13 +13,12 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonProgressBar,
   IonList,
   IonItem,
   IonLabel,
 } from '@ionic/angular/standalone';
 import { WeatherService } from 'src/app/core/services/weather.service';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   sunny,
   navigate,
@@ -36,10 +29,10 @@ import {
   cloud,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
-import { WeatherIconComponent } from 'src/app/components/atoms/weather-icon/weather-icon.component';
 import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
-import { WeatherDetailCardComponent } from 'src/app/components/molecules/weather-detail-card/weather-detail-card.component';
 import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
+import { CurrentWeatherComponent } from 'src/app/components/organisms/current-weather/current-weather.component';
+import { WeatherDetailsGridComponent } from 'src/app/components/organisms/weather-details-grid/weather-details-grid.component';
 import {
   Subject,
   combineLatest,
@@ -74,15 +67,14 @@ import {
     IonGrid,
     IonRow,
     IonCol,
-    IonProgressBar,
     IonList,
     IonItem,
     IonLabel,
     TranslateModule,
-    WeatherIconComponent,
     HourlyBreakdownComponent,
-    WeatherDetailCardComponent,
     ForecastListComponent,
+    CurrentWeatherComponent,
+    WeatherDetailsGridComponent,
   ],
 })
 export class HomePage implements OnInit {
@@ -90,16 +82,16 @@ export class HomePage implements OnInit {
   private settingsService = inject(SettingsService);
 
   weatherData: any;
-  originalWeatherData: any; // Store original data to revert
+  originalWeatherData: any; // Almacenar datos originales para revertir
   selectedDayId: number | null = null;
-  displayDate: number | null = null; // For dynamic title logic
+  displayDate: number | null = null; // Para la lógica del título dinámico
 
   citySearch: string = '';
   currentLang: AppLanguage = 'es';
   currentUnit: UnitSystem = 'metric';
   loadingLocation: boolean = false;
 
-  // Autocomplete
+  // Autocompletado
   searchSubject = new Subject<string>();
   citySuggestions: any[] = [];
   showSuggestions: boolean = false;
@@ -272,68 +264,10 @@ export class HomePage implements OnInit {
   }
 
   private handleWeatherUpdate(data: any) {
-    this.originalWeatherData = JSON.parse(JSON.stringify(data)); // Deep copy to preserve state
+    this.originalWeatherData = JSON.parse(JSON.stringify(data)); // Copia profunda para preservar estado
     this.weatherData = data;
-    this.selectedDayId = null; // Reset selection
-    this.displayDate = null; // Reset date title
-  }
-
-  // Ayudante para UI de Índice UV
-  getUVClass(uv: number): string {
-    if (!uv) return 'low';
-    if (uv <= 2) return 'low';
-    if (uv <= 5) return 'moderate';
-    if (uv <= 7) return 'high';
-    return 'extreme';
-  }
-
-  getUVColor(uv: number): string {
-    if (!uv || uv <= 2) return 'success'; // Verde
-    if (uv <= 5) return 'warning'; // Amarillo
-    if (uv <= 7) return 'warning'; // Naranja (Ionic warning es amarillo/naranja)
-    return 'danger'; // Rojo
-  }
-
-  // Ayudante para UI de Nivel de Viento
-  getWindStatus(speed: number): {
-    key: string;
-    color: string;
-    cssClass: string;
-    value: number;
-  } {
-    // Normalizar a km/h para cálculo unificado
-    let kph = speed;
-    if (this.currentUnit === 'imperial') {
-      kph = speed * 1.60934;
-    }
-
-    // Cálculo proporcional: 100 km/h = 100% de la barra
-    // Se limita a 1 (100%) si supera esa velocidad
-    const value = Math.min(kph / 100, 1);
-
-    let key = '';
-    let color = '';
-    let cssClass = '';
-
-    if (kph < 20) {
-      key = 'WEATHER.WIND_LEVEL.LIGHT';
-      color = 'success';
-      cssClass = 'low';
-    } else if (kph < 40) {
-      key = 'WEATHER.WIND_LEVEL.MODERATE';
-      color = 'warning';
-      cssClass = 'moderate';
-    } else if (kph < 60) {
-      key = 'WEATHER.WIND_LEVEL.STRONG';
-      color = 'warning';
-      cssClass = 'high';
-    } else {
-      key = 'WEATHER.WIND_LEVEL.VERY_STRONG';
-      color = 'danger';
-      cssClass = 'extreme';
-    }
-
-    return { key, color, cssClass, value };
+    this.selectedDayId = null; // Restablecer selección
+    this.displayDate = null; // Restablecer título de la fecha
   }
 
   onDaySelected(day: any) {
@@ -357,7 +291,7 @@ export class HomePage implements OnInit {
     }
 
     this.selectedDayId = day.dt;
-    this.displayDate = day.dt; // Store timestamp for date pipe
+    this.displayDate = day.dt; // Almacenar timestamp para el pipe de fecha
 
     // Construir objeto "Current Weather" basado en el día seleccionado
     // Usamos el promedio/max del día para representar el "estado actual" de ese día

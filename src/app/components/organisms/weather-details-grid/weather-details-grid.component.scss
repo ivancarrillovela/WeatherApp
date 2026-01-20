@@ -1,0 +1,43 @@
+.pad-right-6 {
+  padding-right: 6px;
+}
+
+.pad-left-6 {
+  padding-left: 6px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  app-status-badge {
+    margin-left: 6px;
+  }
+}
+
+.wind-value-nowrap {
+  white-space: nowrap;
+}
+
+.wind-unit-small {
+  font-size: 0.65em;
+  opacity: 0.8;
+}
+
+.na-text {
+  color: var(--ion-color-medium);
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.unit-text {
+  font-size: 0.6em;
+  vertical-align: super;
+  opacity: 0.8;
+}

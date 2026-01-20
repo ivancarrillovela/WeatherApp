@@ -20,7 +20,7 @@ import { water } from 'ionicons/icons';
             ></app-weather-icon>
           </div>
 
-          <!-- Precipitación Hourly (Minimalist) -->
+          <!-- Precipitación por hora (Minimalista) -->
           <div class="hourly-precip" [class.faded]="hour.pop <= 0">
             <ion-icon name="water"></ion-icon>
             <span>{{ hour.pop * 100 | number: '1.0-0' }}%</span>
