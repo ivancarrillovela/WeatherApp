@@ -164,8 +164,10 @@
         vertical-align: middle;
         margin-left: 5px;
         
-        &.high { background: var(--ion-color-primary); color: white; }
-        &.low { background: #48bb78; color: white; }
+        &.low { background: #48bb78; color: white; } /* Green */
+        &.moderate { background: #ecc94b; color: black; } /* Yellow/Orange */
+        &.high { background: #ed8936; color: white; } /* Orange */
+        &.extreme { background: var(--ion-color-danger); color: white; } /* Red */
     }
 }
 

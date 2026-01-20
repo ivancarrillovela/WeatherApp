@@ -243,6 +243,22 @@ export class HomePage implements OnInit {
     }
   }
 
+  // Ayudante para UI de Índice UV
+  getUVClass(uv: number): string {
+    if (!uv) return 'low';
+    if (uv <= 2) return 'low';
+    if (uv <= 5) return 'moderate';
+    if (uv <= 7) return 'high';
+    return 'extreme';
+  }
+
+  getUVColor(uv: number): string {
+    if (!uv || uv <= 2) return 'success'; // Green
+    if (uv <= 5) return 'warning'; // Yellow
+    if (uv <= 7) return 'warning'; // Orange-ish (Ionic warning is yellow/orange)
+    return 'danger'; // Red
+  }
+
   // Ayudante para UI de Nivel de Viento
   getWindStatus(speed: number): { key: string; color: string; value: number } {
     // Normalizar a km/h para cálculo unificado
@@ -257,21 +273,25 @@ export class HomePage implements OnInit {
     if (kph < 20)
       return {
         key: 'WEATHER.WIND_LEVEL.LIGHT',
-        color: 'success',
+        color: 'low',
         value: kph / 100,
       };
     if (kph < 40)
       return {
         key: 'WEATHER.WIND_LEVEL.MODERATE',
-        color: 'warning',
+        color: 'moderate',
         value: kph / 100,
       };
     if (kph < 60)
       return {
         key: 'WEATHER.WIND_LEVEL.STRONG',
-        color: 'danger',
+        color: 'high',
         value: kph / 100,
       };
-    return { key: 'WEATHER.WIND_LEVEL.VERY_STRONG', color: 'danger', value: 1 };
+    return {
+      key: 'WEATHER.WIND_LEVEL.VERY_STRONG',
+      color: 'extreme',
+      value: 1,
+    };
   }
 }
