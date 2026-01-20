@@ -7,6 +7,8 @@ import {
   SettingsService,
   AppLanguage,
 } from 'src/app/core/services/settings.service';
+import { addIcons } from 'ionicons';
+import { water, navigate } from 'ionicons/icons';
 
 @Component({
   selector: 'app-forecast-list',
@@ -20,14 +22,32 @@ import {
             {{ day.dt * 1000 | date: 'EEEE' : undefined : currentLang }}
           </div>
 
-          <div class="condition">
+          <div class="condition-col">
             <app-weather-icon
               [iconCode]="day.weather[0].icon"
               class="forecast-icon"
             ></app-weather-icon>
-            <span class="precip" *ngIf="day.pop > 0"
-              >{{ day.pop * 100 | number: '1.0-0' }}%</span
-            >
+
+            <div class="meta-row">
+              <!-- Precipitation -->
+              <div
+                class="meta-item"
+                [style.opacity]="day.pop > 0 ? '1' : '0.3'"
+              >
+                <ion-icon name="water" class="rain-icon"></ion-icon>
+                <span>{{ day.pop * 100 | number: '1.0-0' }}%</span>
+              </div>
+
+              <!-- Wind -->
+              <div class="meta-item">
+                <ion-icon
+                  name="navigate"
+                  class="wind-icon"
+                  [style.transform]="'rotate(' + (day.wind_deg || 0) + 'deg)'"
+                ></ion-icon>
+                <span>{{ day.wind_speed | number: '1.0-0' }}</span>
+              </div>
+            </div>
           </div>
 
           <div class="temps">
@@ -42,7 +62,6 @@ import {
     `
       .forecast-container {
         padding: 10px 20px;
-        /* Reutilizar glass-card pero quizás con menos padding o ajustes específicos */
       }
 
       .forecast-row {
@@ -63,23 +82,42 @@ import {
           text-transform: capitalize;
         }
 
-        .condition {
-          flex: 1;
-          text-align: center;
+        .condition-col {
+          flex: 2; /* Dedicate more space */
           display: flex;
-          justify-content: center;
+          flex-direction: row; /* Horizontal alignment */
+          justify-content: center; /* Center the group */
           align-items: center;
-          gap: 5px;
-
-          .precip {
-            font-size: 0.75rem;
-            color: #90cdf4; /* Azul claro para lluvia */
-          }
+          gap: 15px; /* Spacing between Icon and Meta Data */
         }
 
         .forecast-icon {
-          font-size: 1.5rem;
-          vertical-align: middle;
+          font-size: 1.5rem; /* Reduced from 1.8rem */
+        }
+
+        .meta-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          opacity: 0.8;
+          font-size: 0.75rem;
+          margin-top: 0; /* Remove top margin since it's side-by-side */
+        }
+
+        .meta-item {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          width: 62px; /* Fixed width to align columns perfectly */
+        }
+
+        .rain-icon {
+          color: #63b3ed;
+          font-size: 1.5rem; /* Reduced from 1.8rem */
+        }
+        .wind-icon {
+          color: #a0aec0;
+          font-size: 1.5rem; /* Reduced from 1.8rem */
         }
 
         .temps {
@@ -106,6 +144,10 @@ export class ForecastListComponent implements OnInit {
 
   private settingsService = inject(SettingsService);
   currentLang: AppLanguage = 'en';
+
+  constructor() {
+    addIcons({ water, navigate });
+  }
 
   ngOnInit() {
     this.settingsService.currentLang$.subscribe((lang) => {

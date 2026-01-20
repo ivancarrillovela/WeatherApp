@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.component';
+import { addIcons } from 'ionicons';
+import { water } from 'ionicons/icons';
 
 @Component({
   selector: 'app-hourly-breakdown',
@@ -17,6 +19,13 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
               [iconCode]="hour.weather[0].icon"
             ></app-weather-icon>
           </div>
+
+          <!-- Precipitación Hourly (Minimalist) -->
+          <div class="hourly-precip" [style.opacity]="hour.pop > 0 ? 1 : 0.3">
+            <ion-icon name="water"></ion-icon>
+            <span>{{ hour.pop * 100 | number: '1.0-0' }}%</span>
+          </div>
+
           <p class="temp">{{ hour.temp | number: '1.0-0' }}°</p>
         </div>
       }
@@ -63,8 +72,23 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
         }
 
         .icon-wrapper {
-          margin-bottom: 10px;
+          margin-bottom: 2px; /* Reduced margin to fit precip */
           font-size: 1.5rem; /* Controlar tamaño del icono */
+        }
+
+        .hourly-precip {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 2px;
+          font-size: 0.7rem;
+          color: #90cdf4;
+          margin-bottom: 8px;
+          height: 15px; /* Fixed height to keep alignment */
+
+          ion-icon {
+            font-size: 0.7rem;
+          }
         }
 
         .temp {
@@ -78,4 +102,8 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
 })
 export class HourlyBreakdownComponent {
   @Input() hourlyForecast: any[] = [];
+
+  constructor() {
+    addIcons({ water });
+  }
 }

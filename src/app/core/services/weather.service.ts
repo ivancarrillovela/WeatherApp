@@ -193,6 +193,7 @@ export class WeatherService {
       wind_speed: windSpeed,
       wind_deg: current.wind.deg,
       weather: current.weather,
+      pop: forecast.list && forecast.list.length > 0 ? forecast.list[0].pop : 0, // Probabilidad de lluvia actual (de hourly)
     };
 
     // Procesar Pronóstico Diario y por Hora
@@ -230,41 +231,58 @@ export class WeatherService {
           weather: item.weather[0], // Tomar el primer estado del clima
           humidity: [],
           wind_speed: [],
+          pop: [], // Array para probabilidad de lluvia
         });
       }
       const day = dailyMap.get(date);
       day.temp_min = Math.min(day.temp_min, item.main.temp_min);
       day.temp_max = Math.max(day.temp_max, item.main.temp_max);
       if (item.main.humidity) day.humidity.push(item.main.humidity);
+      if (item.wind && item.wind.speed) day.wind_speed.push(item.wind.speed);
+      if (item.pop !== undefined) day.pop.push(item.pop);
     });
 
     const dailyList = Array.from(dailyMap.values())
-      .map((day) => ({
-        dt: day.dt,
-        sunrise: 0,
-        sunset: 0,
-        temp: {
-          day: (day.temp_max + day.temp_min) / 2,
-          min: day.temp_min,
-          max: day.temp_max,
-          night: day.temp_min,
-          eve: day.temp_max,
-          morn: day.temp_min,
-        },
-        feels_like: { day: 0, night: 0, eve: 0, morn: 0 },
-        pressure: 0,
-        humidity: day.humidity.length
-          ? day.humidity.reduce((a: number, b: number) => a + b, 0) /
-            day.humidity.length
-          : 0,
-        dew_point: 0,
-        wind_speed: 0,
-        wind_deg: 0,
-        weather: [day.weather],
-        clouds: 0,
-        pop: 0,
-        uvi: 0,
-      }))
+      .map((day) => {
+        // Calcular Viento Máximo
+        let maxWind = day.wind_speed.length ? Math.max(...day.wind_speed) : 0;
+
+        // Conversión de viento si es metric (m/s -> km/h)
+        if (units === 'metric') {
+          maxWind = maxWind * 3.6;
+        }
+
+        // Calcular Probabilidad de Lluvia Máxima (Estilo Google/Estándar)
+        // Si a cualquier hora del día la probabilidad es alta, el día tiene riesgo alto.
+        const maxPop = day.pop.length ? Math.max(...day.pop) : 0;
+
+        return {
+          dt: day.dt,
+          sunrise: 0,
+          sunset: 0,
+          temp: {
+            day: (day.temp_max + day.temp_min) / 2,
+            min: day.temp_min,
+            max: day.temp_max,
+            night: day.temp_min,
+            eve: day.temp_max,
+            morn: day.temp_min,
+          },
+          feels_like: { day: 0, night: 0, eve: 0, morn: 0 },
+          pressure: 0,
+          humidity: day.humidity.length
+            ? day.humidity.reduce((a: number, b: number) => a + b, 0) /
+              day.humidity.length
+            : 0,
+          dew_point: 0,
+          wind_speed: maxWind,
+          wind_deg: 0,
+          weather: [day.weather],
+          clouds: 0,
+          pop: maxPop,
+          uvi: 0,
+        };
+      })
       .slice(0, 5); // Consolidar a los primeros 5 días
 
     return {

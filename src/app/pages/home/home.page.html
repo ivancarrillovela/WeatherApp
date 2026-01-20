@@ -163,14 +163,14 @@
                 </app-weather-detail-card>
               </ion-col>
 
-              <!-- Humidity Card (Bottom Left) -->
+              <!-- Precipitation Card (Bottom Left) -->
               <ion-col size="6" class="ion-padding-vertical pad-right-6">
                 <app-weather-detail-card
-                  [title]="'WEATHER.HUMIDITY' | translate"
+                  [title]="'WEATHER.PRECIPITATION' | translate"
                   icon="water"
                   iconColor="primary"
                 >
-                  {{ weatherData.current.humidity }}
+                  {{ (weatherData.current.pop * 100) | number:'1.0-0' }}
                   <span style="font-size: 1rem; opacity: 0.7">%</span>
                 </app-weather-detail-card>
               </ion-col>
