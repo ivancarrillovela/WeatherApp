@@ -154,10 +154,11 @@
                         margin-bottom: 4px;
                       "
                     >
-                      <span
-                        >{{ getWindStatus(weatherData.current.wind_speed).value
-                        * 100 | number:'1.0-0' }} km/h</span
-                      >
+                      <span>
+                        {{ weatherData.current.wind_speed | number:'1.0-0' }} {{
+                        (currentUnit === 'imperial' ? 'WEATHER.MPH' :
+                        'WEATHER.KPH') | translate }}
+                      </span>
                       <span
                         class="badge {{ getWindStatus(weatherData.current.wind_speed).cssClass }}"
                       >
