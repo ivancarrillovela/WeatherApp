@@ -101,10 +101,9 @@
           <!-- DETAILS GRID -->
           <ion-grid class="ion-no-padding ion-margin-top api-details">
             <ion-row>
-              <!-- UV Card -->
+              <!-- UV Card (Top Left) -->
               <ion-col
                 size="6"
-                size-md="3"
                 class="ion-padding-vertical"
                 style="padding-right: 6px"
               >
@@ -122,9 +121,9 @@
                         margin-bottom: 4px;
                       "
                     >
-                      <span
-                        >{{ weatherData.current.uvi | number:'1.0-0' }}</span
-                      >
+                      <span>
+                        {{ weatherData.current.uvi | number:'1.0-0' }}
+                      </span>
                       <span
                         class="badge {{ getUVClass(weatherData.current.uvi) }}"
                         *ngIf="weatherData.current.uvi"
@@ -145,12 +144,11 @@
                 </app-weather-detail-card>
               </ion-col>
 
-              <!-- Wind Card -->
+              <!-- Wind Card (Top Right) -->
               <ion-col
                 size="6"
-                size-md="3"
                 class="ion-padding-vertical"
-                style="padding-left: 6px; padding-right: 6px"
+                style="padding-left: 6px"
               >
                 <app-weather-detail-card
                   [title]="'WEATHER.WIND' | translate"
@@ -187,12 +185,11 @@
                 </app-weather-detail-card>
               </ion-col>
 
-              <!-- Humidity Card -->
+              <!-- Humidity Card (Bottom Left) -->
               <ion-col
                 size="6"
-                size-md="3"
                 class="ion-padding-vertical"
-                style="padding-right: 6px; padding-left: 6px"
+                style="padding-right: 6px"
               >
                 <app-weather-detail-card
                   [title]="'WEATHER.HUMIDITY' | translate"
@@ -204,10 +201,9 @@
                 </app-weather-detail-card>
               </ion-col>
 
-              <!-- Sunset Card -->
+              <!-- Sunset Card (Bottom Right) -->
               <ion-col
                 size="6"
-                size-md="3"
                 class="ion-padding-vertical"
                 style="padding-left: 6px"
               >
