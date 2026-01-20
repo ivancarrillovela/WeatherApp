@@ -277,40 +277,37 @@ export class HomePage implements OnInit {
     value: number;
   } {
     // Normalizar a km/h para cálculo unificado
-    // Si es Imperial (mph):
-    // Suave: < 12, Moderado: 12-25, Fuerte: 25-37, Muy: > 37
-
     let kph = speed;
     if (this.currentUnit === 'imperial') {
       kph = speed * 1.60934;
     }
 
-    if (kph < 20)
-      return {
-        key: 'WEATHER.WIND_LEVEL.LIGHT',
-        color: 'success',
-        cssClass: 'low',
-        value: kph / 100,
-      };
-    if (kph < 40)
-      return {
-        key: 'WEATHER.WIND_LEVEL.MODERATE',
-        color: 'warning',
-        cssClass: 'moderate',
-        value: kph / 100,
-      };
-    if (kph < 60)
-      return {
-        key: 'WEATHER.WIND_LEVEL.STRONG',
-        color: 'warning',
-        cssClass: 'high',
-        value: kph / 100,
-      };
-    return {
-      key: 'WEATHER.WIND_LEVEL.VERY_STRONG',
-      color: 'danger',
-      cssClass: 'extreme',
-      value: 1,
-    };
+    // Cálculo proporcional: 100 km/h = 100% de la barra
+    // Se limita a 1 (100%) si supera esa velocidad
+    const value = Math.min(kph / 100, 1);
+
+    let key = '';
+    let color = '';
+    let cssClass = '';
+
+    if (kph < 20) {
+      key = 'WEATHER.WIND_LEVEL.LIGHT';
+      color = 'success';
+      cssClass = 'low';
+    } else if (kph < 40) {
+      key = 'WEATHER.WIND_LEVEL.MODERATE';
+      color = 'warning';
+      cssClass = 'moderate';
+    } else if (kph < 60) {
+      key = 'WEATHER.WIND_LEVEL.STRONG';
+      color = 'warning';
+      cssClass = 'high';
+    } else {
+      key = 'WEATHER.WIND_LEVEL.VERY_STRONG';
+      color = 'danger';
+      cssClass = 'extreme';
+    }
+
+    return { key, color, cssClass, value };
   }
 }
