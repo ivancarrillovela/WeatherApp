@@ -27,6 +27,13 @@ export class WeatherService {
     );
   }
 
+  // Reverse geocoding to get city name from coordinates
+  reverseGeocode(lat: number, lon: number): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.geoUrl}/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${this.apiKey}`,
+    );
+  }
+
   // Buscar ciudades (Autocomplete) - LOCAL
   searchLocalCities(query: string): any[] {
     if (!query || query.length < 2) return [];
@@ -70,10 +77,33 @@ export class WeatherService {
     return forkJoin({
       current: this.getCurrentWeather(lat, lon, units, lang),
       forecast: this.getForecast(lat, lon, units, lang),
+      geo: this.reverseGeocode(lat, lon), // Fetch precise location name
     }).pipe(
-      map(({ current, forecast }) =>
-        this.mapToWeatherData(lat, lon, current, forecast),
-      ),
+      map(({ current, forecast, geo }) => {
+        // Use the name from reverse geocoding if available, as it is more precise (e.g., Pamplona vs Navarre)
+        let exactName = current.name;
+        if (geo && geo.length > 0) {
+          const location = geo[0];
+          // Prefer localized name if available in the requested language
+          // Note: 'lang' param in reverse API only affects response if supported, but here we can check local_names
+          // However, the reverse API called above doesn't have &lang= param mapped yet,
+          // but the 'local_names' object allows client-side selection.
+          if (location.local_names && location.local_names[lang]) {
+            exactName = location.local_names[lang];
+          } else {
+            exactName = location.name;
+          }
+        }
+
+        // Override the name in current weather object
+        const currentWithPreciseName = { ...current, name: exactName };
+        return this.mapToWeatherData(
+          lat,
+          lon,
+          currentWithPreciseName,
+          forecast,
+        );
+      }),
     );
   }
 
