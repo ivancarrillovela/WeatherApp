@@ -11,16 +11,15 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
     <div class="hero-section ion-text-center">
       <!-- Dynamic Date Title -->
       <h3 class="date-title">
-        <ng-container *ngIf="!displayDate">
+        @if (!displayDate) {
           {{ 'HOME.TODAY' | translate }}
-        </ng-container>
-        <ng-container *ngIf="displayDate">
+        } @else {
           {{
             displayDate * 1000
               | date: 'EEEE, d MMMM' : undefined : currentLang
               | titlecase
           }}
-        </ng-container>
+        }
       </h3>
 
       <h2 class="city-name">

@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { WeatherDetailCardComponent } from '../../molecules/weather-detail-card/weather-detail-card.component';
 import { StatusBadgeComponent } from '../../atoms/status-badge/status-badge.component';
+import { CurrentWeather } from 'src/app/core/models/weather.model';
 
 @Component({
   selector: 'app-weather-details-grid',
@@ -19,32 +20,40 @@ import { StatusBadgeComponent } from '../../atoms/status-badge/status-badge.comp
   styleUrls: ['./weather-details-grid.component.scss'],
 })
 export class WeatherDetailsGridComponent {
-  @Input() current: any;
+  @Input() current!: CurrentWeather;
   @Input() currentUnit: string = 'metric';
 
   // Ayudante para UI de Índice UV
-  getUVClass(uv: number): string {
-    if (!uv) return 'low';
+  getUVClass(uv: number | null): string {
+    if (uv === null || uv === undefined) return 'low';
     if (uv <= 2) return 'low';
     if (uv <= 5) return 'moderate';
     if (uv <= 7) return 'high';
     return 'extreme';
   }
 
-  getUVColor(uv: number): string {
-    if (!uv || uv <= 2) return 'success'; // Verde
+  getUVColor(uv: number | null): string {
+    if (uv === null || uv === undefined || uv <= 2) return 'success'; // Verde
     if (uv <= 5) return 'warning'; // Amarillo
     if (uv <= 7) return 'warning'; // Naranja
     return 'danger'; // Rojo
   }
 
   // Ayudante para UI de Nivel de Viento
-  getWindStatus(speed: number): {
+  getWindStatus(speed: number | null): {
     key: string;
     color: string;
     cssClass: string;
     value: number;
   } {
+    if (speed === null || speed === undefined) {
+      return {
+        key: 'WEATHER.NA',
+        color: 'medium',
+        cssClass: 'low',
+        value: 0,
+      };
+    }
     // Normalizar a km/h para cálculo unificado
     let kph = speed;
     if (this.currentUnit === 'imperial') {

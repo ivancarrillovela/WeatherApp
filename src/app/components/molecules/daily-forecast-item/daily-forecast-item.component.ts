@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.component';
 import { addIcons } from 'ionicons';
 import { water, navigate } from 'ionicons/icons';
+import { DailyForecast } from 'src/app/core/models/weather.model';
 
 @Component({
   selector: 'app-daily-forecast-item',
@@ -13,7 +14,7 @@ import { water, navigate } from 'ionicons/icons';
   styleUrls: ['./daily-forecast-item.component.scss'],
 })
 export class DailyForecastItemComponent {
-  @Input() day: any;
+  @Input() day!: DailyForecast;
   @Input() currentLang: string = 'en';
   @Input() isActive: boolean = false;
   @Output() select = new EventEmitter<void>();

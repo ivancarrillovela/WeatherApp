@@ -3,6 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap, forkJoin, map, of, catchError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CITIES } from '../constants/cities';
+import {
+  WeatherData,
+  CurrentWeather,
+  DailyForecast,
+  HourlyForecast,
+} from 'src/app/core/models/weather.model';
 
 @Injectable({
   providedIn: 'root',
@@ -98,13 +104,13 @@ export class WeatherService {
     lon: number,
     units: string = 'imperial',
     lang: string = 'en',
-  ): Observable<any> {
+  ): Observable<WeatherData> {
     return forkJoin({
       current: this.getCurrentWeather(lat, lon, units, lang),
       forecast: this.getForecast(lat, lon, units, lang),
       uv: this.getUVIndex(lat, lon).pipe(catchError(() => of({ value: 0 }))), // Capturar error, por defecto 0
       geo: this.reverseGeocode(lat, lon).pipe(
-        // Fallar gentilmente si falla la geocodificación inversa
+        // Fallar suavemente si la geocodificación inversa falla
         switchMap((res) => of(res)),
         catchError(() => of([])),
       ),
@@ -132,7 +138,7 @@ export class WeatherService {
     city: string,
     units: string = 'imperial',
     lang: string = 'en',
-  ): Observable<any> {
+  ): Observable<WeatherData> {
     return this.getCoordinates(city).pipe(
       switchMap((geoData: any[]) => {
         if (geoData.length > 0) {
@@ -169,7 +175,7 @@ export class WeatherService {
     forecast: any,
     uvValue: number = 0,
     units: string = 'imperial',
-  ): any {
+  ): WeatherData {
     // Clima Actual
     let windSpeed = current.wind.speed;
     if (units === 'metric') {

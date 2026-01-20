@@ -1,34 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import {
-  IonHeader,
-  IonToolbar,
   IonContent,
-  IonSearchbar,
   IonSpinner,
-  IonButton,
-  IonIcon,
-  IonButtons,
   IonGrid,
   IonRow,
   IonCol,
-  IonList,
-  IonItem,
-  IonLabel,
 } from '@ionic/angular/standalone';
 import { WeatherService } from 'src/app/core/services/weather.service';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  sunny,
-  navigate,
-  locate,
-  water,
-  moon,
-  thermometer,
-  cloud,
-} from 'ionicons/icons';
-import { addIcons } from 'ionicons';
 import { HourlyBreakdownComponent } from 'src/app/components/molecules/hourly-breakdown/hourly-breakdown.component';
 import { ForecastListComponent } from 'src/app/components/organisms/forecast-list/forecast-list.component';
 import { CurrentWeatherComponent } from 'src/app/components/organisms/current-weather/current-weather.component';
@@ -49,6 +29,7 @@ import {
   AppLanguage,
   UnitSystem,
 } from 'src/app/core/services/settings.service';
+import { WeatherData, DailyForecast } from 'src/app/core/models/weather.model';
 
 @Component({
   selector: 'app-home',
@@ -57,21 +38,11 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    IonHeader,
-    IonToolbar,
     IonContent,
-    IonSearchbar,
     IonSpinner,
-    IonButton,
-    IonIcon,
-    IonButtons,
     IonGrid,
     IonRow,
     IonCol,
-    IonList,
-    IonItem,
-    IonLabel,
     TranslateModule,
     HourlyBreakdownComponent,
     ForecastListComponent,
@@ -85,8 +56,8 @@ export class HomePage implements OnInit {
   private weatherService = inject(WeatherService);
   private settingsService = inject(SettingsService);
 
-  weatherData: any;
-  originalWeatherData: any; // Almacenar datos originales para revertir
+  weatherData: WeatherData | null = null;
+  originalWeatherData: WeatherData | null = null; // Almacenar datos originales para revertir
   selectedDayId: number | null = null;
   displayDate: number | null = null; // Para la lógica del título dinámico
 
@@ -100,9 +71,7 @@ export class HomePage implements OnInit {
   citySuggestions: any[] = [];
   showSuggestions: boolean = false;
 
-  constructor() {
-    addIcons({ sunny, navigate, locate, water, moon, thermometer, cloud });
-  }
+  constructor() {}
 
   ngOnInit() {
     // Sincronizar cambios de idioma y unidad para evitar condiciones de carrera
@@ -267,17 +236,20 @@ export class HomePage implements OnInit {
     }
   }
 
-  private handleWeatherUpdate(data: any) {
+  private handleWeatherUpdate(data: WeatherData) {
     this.originalWeatherData = JSON.parse(JSON.stringify(data)); // Copia profunda para preservar estado
     this.weatherData = data;
     this.selectedDayId = null; // Restablecer selección
     this.displayDate = null; // Restablecer título de la fecha
   }
 
-  onDaySelected(day: any) {
+  onDaySelected(day: DailyForecast) {
+    if (!this.weatherData || !this.originalWeatherData) return;
+
     // 1. Si seleccionamos "Hoy" (primer día), restauramos el estado original
     if (
-      this.originalWeatherData?.daily?.length > 0 &&
+      this.originalWeatherData.daily &&
+      this.originalWeatherData.daily.length > 0 &&
       day.dt === this.originalWeatherData.daily[0].dt
     ) {
       this.weatherData = JSON.parse(JSON.stringify(this.originalWeatherData));
@@ -299,25 +271,33 @@ export class HomePage implements OnInit {
 
     // Construir objeto "Current Weather" basado en el día seleccionado
     // Usamos el promedio/max del día para representar el "estado actual" de ese día
-    const newCurrent = {
-      ...this.originalWeatherData.current, // Mantener nombre, coordenadas, sys...
+    const currentData = this.originalWeatherData.current;
+
+    // Create new current weather object, ensuring we respect the interface
+    // Note: WeatherData.current.weather is array.
+
+    // We need to map DailyForecast to CurrentWeather.
+    // Some fields might be missing in Daily (e.g. visibility).
+    // We use safe defaults or map available fields.
+
+    const newCurrent: any = {
+      ...currentData, // Mantener nombre, coordenadas, sys...
       dt: day.dt,
-      sunrise: day.sunrise,
-      sunset: day.sunset,
+      sunrise: day.sunrise || currentData.sunrise,
+      sunset: day.sunset || currentData.sunset,
       temp: day.temp.day, // Temp promedio día
-      temp_min: day.temp.min,
-      temp_max: day.temp.max,
-      feels_like: day.feels_like.day,
-      humidity: day.humidity,
-      pressure: day.pressure,
-      wind_speed: day.wind_speed,
-      wind_deg: day.wind_deg,
+      // feels_like needs to be number in CurrentWeather, but is object in Daily.
+      feels_like: day.feels_like.day || day.temp.day,
+      humidity: day.humidity || 0,
+      pressure: day.pressure || 0,
+      wind_speed: day.wind_speed || 0,
+      wind_deg: day.wind_deg || 0,
       weather: day.weather, // Array de clima
-      clouds: day.clouds,
+      clouds: day.clouds || 0,
       pop: day.pop,
-      uvi: day.uvi,
-      visibility: day.visibility,
-      dew_point: day.dew_point,
+      uvi: day.uvi || 0,
+      visibility: 10000, // Dummy for forecast view
+      dew_point: day.dew_point || 0,
     };
 
     // Actualizar datos mostrados

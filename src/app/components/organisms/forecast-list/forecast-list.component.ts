@@ -14,6 +14,7 @@ import {
   SettingsService,
   AppLanguage,
 } from 'src/app/core/services/settings.service';
+import { DailyForecast } from 'src/app/core/models/weather.model';
 
 @Component({
   selector: 'app-forecast-list',
@@ -42,9 +43,9 @@ import {
   styleUrls: ['./forecast-list.component.scss'],
 })
 export class ForecastListComponent implements OnInit {
-  @Input() dailyForecast: any[] = [];
+  @Input() dailyForecast: DailyForecast[] = [];
   @Input() selectedDayId: number | null = null;
-  @Output() daySelected = new EventEmitter<any>();
+  @Output() daySelected = new EventEmitter<DailyForecast>();
 
   private settingsService = inject(SettingsService);
   currentLang: AppLanguage = 'en';
@@ -57,7 +58,7 @@ export class ForecastListComponent implements OnInit {
     });
   }
 
-  selectDay(day: any, index: number) {
+  selectDay(day: DailyForecast, index: number) {
     if (
       this.selectedDayId === day.dt ||
       (this.selectedDayId === null && index === 0)
