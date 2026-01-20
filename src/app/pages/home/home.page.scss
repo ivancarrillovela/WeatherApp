@@ -173,28 +173,28 @@
         align-items: center;
         gap: 5px; /* Reduced gap slightly */
     }
+}
+
+.badge {
+    font-size: 0.6rem; /* Small but visible size for mobile */
+    padding: 1px 4px;
+    border-radius: 6px;
+    vertical-align: middle;
+    margin-left: 5px;
+    font-weight: 600;
+    white-space: nowrap; /* Prevent badge text wrapping */
+    letter-spacing: 0.5px;
     
-    .badge {
-        font-size: 0.5rem; /* Extremely small for mobile */
-        padding: 1px 3px;
-        border-radius: 6px;
-        vertical-align: middle;
-        margin-left: 5px;
-        font-weight: 600;
-        white-space: nowrap; /* Prevent badge text wrapping */
-        letter-spacing: 0.5px;
-        
-        @media (min-width: 768px) {
-            font-size: 0.75rem; /* Restore readability on desktop */
-            padding: 2px 10px;
-            border-radius: 8px;
-        }
-        
-        &.low { background: #48bb78; color: white; } /* Green */
-        &.moderate { background: #ecc94b; color: black; } /* Yellow/Orange */
-        &.high { background: #db711b; color: white; } /* Orange */
-        &.extreme { background: var(--ion-color-danger); color: white; } /* Red */
+    @media (min-width: 768px) {
+        font-size: 0.75rem; /* Restore readability on desktop */
+        padding: 2px 10px;
+        border-radius: 8px;
     }
+    
+    &.low { background: #48bb78; color: white; } /* Green */
+    &.moderate { background: #ecc94b; color: black; } /* Yellow/Orange */
+    &.high { background: #db711b; color: white; } /* Orange */
+    &.extreme { background: var(--ion-color-danger); color: white; } /* Red */
 }
 
 /* Wind Widget Customization */
