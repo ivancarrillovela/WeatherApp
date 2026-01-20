@@ -172,7 +172,12 @@
 .wind-circle {
     text-align: center;
     position: relative;
-    padding-top: 10px;
+    padding-top: 0; /* Remove top padding */
+    flex: 1; /* Take remaining space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
     .arrow {
         font-size: 2rem;

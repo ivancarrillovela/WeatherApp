@@ -39,7 +39,7 @@
         <ion-icon
           slot="icon-only"
           name="locate"
-          color="light"
+          style="color: white !important"
           *ngIf="!loadingLocation"
         ></ion-icon>
         <ion-spinner name="crescent" *ngIf="loadingLocation"></ion-spinner>
@@ -135,11 +135,11 @@
                   <div class="wind-circle">
                     <div
                       class="arrow"
-                      [style.transform]="'rotate(' + weatherData.current.wind_deg + 'deg)'"
+                      [style.transform]="'rotate(' + (weatherData.current.wind_deg || 0) + 'deg)'"
                     >
                       ➤
                     </div>
-                    <div class="speed">
+                    <div class="speed" style="color: white">
                       {{ weatherData.current.wind_speed | number:'1.0-0' }}<span
                         class="unit"
                         >{{ (currentUnit === 'imperial' ? 'WEATHER.MPH' :

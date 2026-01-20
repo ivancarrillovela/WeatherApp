@@ -112,6 +112,7 @@ export class WeatherService {
           currentWithPreciseName,
           forecast,
           uv.value, // Pass UV value
+          units, // Pass units
         );
       }),
     );
@@ -135,7 +136,14 @@ export class WeatherService {
             ),
           }).pipe(
             map(({ current, forecast, uv }) =>
-              this.mapToWeatherData(lat, lon, current, forecast, uv.value),
+              this.mapToWeatherData(
+                lat,
+                lon,
+                current,
+                forecast,
+                uv.value,
+                units,
+              ),
             ),
           );
         } else {
@@ -150,9 +158,15 @@ export class WeatherService {
     lon: number,
     current: any,
     forecast: any,
-    uvValue: number = 0, // Add UV parameter
+    uvValue: number = 0,
+    units: string = 'imperial', // Add units parameter
   ): any {
     // Current Weather
+    let windSpeed = current.wind.speed;
+    if (units === 'metric') {
+      windSpeed = windSpeed * 3.6; // Convert m/s to km/h
+    }
+
     const currentWeather = {
       name: current.name,
       country: current.sys.country,
@@ -167,7 +181,7 @@ export class WeatherService {
       uvi: uvValue, // Use real UV value
       clouds: current.clouds.all,
       visibility: current.visibility,
-      wind_speed: current.wind.speed,
+      wind_speed: windSpeed,
       wind_deg: current.wind.deg,
       weather: current.weather,
     };
