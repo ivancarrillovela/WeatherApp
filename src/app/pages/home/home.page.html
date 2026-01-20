@@ -123,8 +123,9 @@
                         class="badge {{ getUVClass(weatherData.current.uvi) }}"
                         *ngIf="weatherData.current.uvi"
                       >
-                        {{ (weatherData.current.uvi > 5 ? 'WEATHER.HIGH' :
-                        'WEATHER.LOW') | translate }}
+                        {{ 'WEATHER.UV_LEVEL.' +
+                        getUVClass(weatherData.current.uvi).toUpperCase() |
+                        translate }}
                       </span>
                       <span class="badge low" *ngIf="!weatherData.current.uvi"
                         >N/A</span
