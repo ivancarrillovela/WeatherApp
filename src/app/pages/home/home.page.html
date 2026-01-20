@@ -143,21 +143,9 @@
                   [title]="'WEATHER.WIND' | translate"
                   icon="navigate"
                   [iconColor]="getWindStatus(weatherData.current.wind_speed).color"
+                  [iconRotation]="weatherData.current.wind_deg || 0"
                 >
                   <div style="width: 100%">
-                    <div style="text-align: center; margin-bottom: 4px">
-                      <div
-                        style="
-                          display: inline-block;
-                          font-size: 1.5rem;
-                          color: var(--ion-color-tertiary);
-                          transition: transform 0.5s;
-                        "
-                        [style.transform]="'rotate(' + (weatherData.current.wind_deg || 0) + 'deg)'"
-                      >
-                        ➤
-                      </div>
-                    </div>
                     <div
                       style="
                         display: flex;
