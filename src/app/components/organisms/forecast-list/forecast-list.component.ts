@@ -42,7 +42,7 @@ import {
     `
       .forecast-container {
         padding: 10px 20px;
-        /* Reuse glass-card but maybe less padding or specific adjustments */
+        /* Reutilizar glass-card pero quizás con menos padding o ajustes específicos */
       }
 
       .forecast-row {
@@ -73,7 +73,7 @@ import {
 
           .precip {
             font-size: 0.75rem;
-            color: #90cdf4; /* Light blue for rain */
+            color: #90cdf4; /* Azul claro para lluvia */
           }
         }
 

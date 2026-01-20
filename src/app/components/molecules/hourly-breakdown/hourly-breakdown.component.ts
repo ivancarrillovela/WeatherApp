@@ -30,7 +30,7 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
         padding-bottom: 20px;
         gap: 12px;
 
-        /* Hide Scrollbar */
+        /* Ocultar barra de desplazamiento */
         scrollbar-width: none;
         &::-webkit-scrollbar {
           display: none;
@@ -64,7 +64,7 @@ import { WeatherIconComponent } from '../../atoms/weather-icon/weather-icon.comp
 
         .icon-wrapper {
           margin-bottom: 10px;
-          font-size: 1.5rem; /* Control icon size */
+          font-size: 1.5rem; /* Controlar tamaño del icono */
         }
 
         .temp {

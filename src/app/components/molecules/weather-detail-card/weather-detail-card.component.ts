@@ -37,7 +37,7 @@ import { IonIcon } from '@ionic/angular/standalone';
 
       .detail-card {
         padding: 16px;
-        height: 100%; /* Ensure full height in grid */
+        height: 100%; /* Asegurar altura completa en grid */
         display: flex;
         flex-direction: column;
         justify-content: center;

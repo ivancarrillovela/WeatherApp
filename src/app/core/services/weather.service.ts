@@ -27,23 +27,23 @@ export class WeatherService {
     );
   }
 
-  // Reverse geocoding to get city name from coordinates
+  // Geocodificación inversa para obtener el nombre de la ciudad desde coordenadas
   reverseGeocode(lat: number, lon: number): Observable<any[]> {
     return this.http.get<any[]>(
       `${this.geoUrl}/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${this.apiKey}`,
     );
   }
 
-  // Buscar ciudades (Autocomplete) - LOCAL
+  // Buscar ciudades (Autocompletado) - LOCAL
   searchLocalCities(query: string): any[] {
     if (!query || query.length < 2) return [];
     const lowerQuery = query.toLowerCase();
     return CITIES.filter((city) =>
       city.name.toLowerCase().startsWith(lowerQuery),
-    ).slice(0, 5); // Limit local results
+    ).slice(0, 5); // Limitar resultados locales
   }
 
-  // Get Current Weather (API 2.5)
+  // Obtener Clima Actual (API 2.5)
   getCurrentWeather(
     lat: number,
     lon: number,
@@ -55,7 +55,7 @@ export class WeatherService {
     );
   }
 
-  // Get 5 Day / 3 Hour Forecast (API 2.5)
+  // Obtener Pronóstico de 5 Días / 3 Horas (API 2.5)
   getForecast(
     lat: number,
     lon: number,
@@ -67,7 +67,7 @@ export class WeatherService {
     );
   }
 
-  // Get UV Index (Legacy API for Standard Plan)
+  // Obtener Índice UV (API Legacy para Plan Estándar)
   getUVIndex(lat: number, lon: number): Observable<any> {
     return this.http.get(
       `${this.baseUrl}/uvi?lat=${lat}&lon=${lon}&appid=${this.apiKey}`,
