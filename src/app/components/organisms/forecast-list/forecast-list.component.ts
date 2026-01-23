@@ -25,21 +25,7 @@ import { DailyForecast } from 'src/app/core/models/weather.model';
     TranslateModule,
     DailyForecastItemComponent,
   ],
-  template: `
-    <div class="forecast-container glass-card">
-      @for (day of dailyForecast; track day.dt; let i = $index) {
-        <app-daily-forecast-item
-          class="forecast-item"
-          [day]="day"
-          [currentLang]="currentLang"
-          [isActive]="
-            selectedDayId === day.dt || (selectedDayId === null && i === 0)
-          "
-          (select)="selectDay(day, i)"
-        ></app-daily-forecast-item>
-      }
-    </div>
-  `,
+  templateUrl: './forecast-list.component.html',
   styleUrls: ['./forecast-list.component.scss'],
 })
 export class ForecastListComponent implements OnInit {

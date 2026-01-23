@@ -7,13 +7,7 @@ import { HourlyForecastItemComponent } from '../../molecules/hourly-forecast-ite
   selector: 'app-hourly-breakdown',
   standalone: true,
   imports: [CommonModule, IonicModule, HourlyForecastItemComponent],
-  template: `
-    <div class="hourly-container">
-      @for (hour of hourlyForecast; track hour.dt) {
-        <app-hourly-forecast-item [hour]="hour"></app-hourly-forecast-item>
-      }
-    </div>
-  `,
+  templateUrl: './hourly-breakdown.component.html',
   styleUrls: ['./hourly-breakdown.component.scss'],
 })
 export class HourlyBreakdownComponent {

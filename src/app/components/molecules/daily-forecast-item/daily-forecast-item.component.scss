@@ -6,8 +6,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px; /* Internal spacing */
-  margin: 0 -20px; /* Negative margin to fill container width */
+  padding: 12px 20px; /* Espaciado interno */
+  margin: 0 -20px; /* Margen negativo para llenar ancho del contenedor */
   border-radius: 12px;
   cursor: pointer;
   transition: background 0.2s;
@@ -28,7 +28,7 @@
     cursor: default;
     pointer-events: none;
 
-    /* Typography Highlighting */
+    /* Resaltado de tipografía */
     .day-name {
       color: #ffce00;
       font-weight: 700;
@@ -49,9 +49,9 @@
   }
 
   .condition-col {
-    flex: 2; /* Dedicate more space */
+    flex: 2; /* Dedicar más espacio */
     display: flex;
-    flex-direction: row; /* Horizontal alignment */
+    flex-direction: row; /* Alineación horizontal */
     justify-content: center; /* Center the group */
     align-items: center;
     gap: 15px; /* Spacing between Icon and Meta Data */

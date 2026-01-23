@@ -10,7 +10,7 @@
     ></ion-searchbar>
 
     <ion-buttons slot="end">
-      <!-- Custom Language Toggle -->
+      <!-- Selector de idioma personalizado -->
       <div class="language-toggle">
         <div
           class="toggle-option"
@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <!-- Location Button -->
+      <!-- Botón de ubicación -->
       <ion-button
         fill="clear"
         (click)="requestLocation.emit()"
@@ -49,7 +49,7 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <!-- Suggestions Dropdown (Floating) -->
+  <!-- Desplegable de sugerencias (flotante) -->
   @if (showSuggestions && citySuggestions.length > 0) {
     <div class="suggestions-container">
       <ion-list lines="none" class="glass-list">

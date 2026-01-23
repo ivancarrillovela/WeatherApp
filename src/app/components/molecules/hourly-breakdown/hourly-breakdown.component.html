@@ -1,0 +1,5 @@
+<div class="hourly-container">
+  @for (hour of hourlyForecast; track hour.dt) {
+    <app-hourly-forecast-item [hour]="hour"></app-hourly-forecast-item>
+  }
+</div>

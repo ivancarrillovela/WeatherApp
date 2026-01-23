@@ -149,7 +149,7 @@ export class HomePage implements OnInit {
       this.citySearch = ''; // Limpiar búsqueda
     } catch (e) {
       console.error('Error obteniendo ubicación', e);
-      // Fallback a Madrid si falla la ubicación
+      // Usar Madrid por defecto si falla la ubicación
       if (!this.weatherData) {
         this.loadWeather(40.4168, -3.7038);
       }
@@ -273,37 +273,37 @@ export class HomePage implements OnInit {
     // Usamos el promedio/max del día para representar el "estado actual" de ese día
     const currentData = this.originalWeatherData.current;
 
-    // Create new current weather object, ensuring we respect the interface
-    // Note: WeatherData.current.weather is array.
+    // Crear nuevo objeto de clima actual, respetando la interfaz
+    // Nota: WeatherData.current.weather es un array.
 
-    // We need to map DailyForecast to CurrentWeather.
-    // Some fields might be missing in Daily (e.g. visibility).
-    // We use safe defaults or map available fields.
+    // Necesitamos mapear DailyForecast a CurrentWeather.
+    // Algunos campos pueden faltar en Daily (ej. visibility).
+    // Usamos valores predeterminados seguros o mapeamos campos disponibles.
 
     const newCurrent: any = {
       ...currentData, // Mantener nombre, coordenadas, sys...
       dt: day.dt,
-      sunrise: day.sunrise || currentData.sunrise,
-      sunset: day.sunset || currentData.sunset,
+      sunrise: day.sunrise ? day.sunrise : null, // Si no hay sunrise (futuro), es null
+      sunset: day.sunset ? day.sunset : null, // Si no hay sunset, null
       temp: day.temp.day, // Temp promedio día
-      // feels_like needs to be number in CurrentWeather, but is object in Daily.
-      feels_like: day.feels_like.day || day.temp.day,
-      humidity: day.humidity || 0,
-      pressure: day.pressure || 0,
-      wind_speed: day.wind_speed || 0,
-      wind_deg: day.wind_deg || 0,
+      // feels_like debe ser number en CurrentWeather, pero es objeto en Daily.
+      feels_like: day.feels_like.day ?? day.temp.day,
+      humidity: day.humidity ?? null,
+      pressure: day.pressure ?? null,
+      wind_speed: day.wind_speed ?? null,
+      wind_deg: day.wind_deg ?? 0,
       weather: day.weather, // Array de clima
-      clouds: day.clouds || 0,
-      pop: day.pop,
-      uvi: day.uvi || 0,
-      visibility: 10000, // Dummy for forecast view
-      dew_point: day.dew_point || 0,
+      clouds: day.clouds ?? null,
+      pop: day.pop ?? null,
+      uvi: day.uvi ?? null, // Si es undefined/null, se queda null
+      visibility: null, // Visible en null para mostrar N/A si se requiriera
+      dew_point: day.dew_point ?? null,
     };
 
     // Actualizar datos mostrados
     this.weatherData.current = newCurrent;
 
-    // IMPORTANTE: Rolling Window de 7 elementos
+    // IMPORTANTE: Ventana deslizante de 7 elementos
     // Buscamos el índice de inicio de ese día en la lista completa original
     if (this.originalWeatherData && this.originalWeatherData.hourly) {
       // Encontramos el primer segmento que coincida con el inicio de los segmentos de ese día
@@ -324,7 +324,7 @@ export class HomePage implements OnInit {
           startIndex + 8,
         );
       } else {
-        // Fallback
+        // Respaldo
         this.weatherData.hourly = day.hourlySegments || [];
       }
     }

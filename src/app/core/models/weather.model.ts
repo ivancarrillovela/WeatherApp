@@ -46,7 +46,7 @@ export interface DailyForecast {
   clouds: number | null;
   pop: number | null;
   rain?: number;
-  uvi: number | null; // Allow null
+  uvi: number | null; // Permitir null
   hourlySegments?: HourlyForecast[];
 }
 

@@ -206,7 +206,7 @@ export class WeatherService {
     const dailyMap = new Map<string, any>();
     const hourlyList = [];
 
-    // Por Hora: Procesar TODA la lista para permitir "rolling window" en la UI
+    // Por Hora: Procesar TODA la lista para permitir "ventana deslizante" en la UI
     // La vista por defecto limitará esto con slice, pero necesitamos los datos completos disponibles.
     for (let i = 0; i < forecast.list.length; i++) {
       const item = forecast.list[i];

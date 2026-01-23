@@ -10,7 +10,7 @@
 
 .detail-card {
   padding: 16px;
-  height: 100%; /* Asegurar altura completa en grid */
+  height: 100%; /* Asegurar altura completa en cuadrícula */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -37,7 +37,7 @@
 
   ion-icon {
     font-size: 1.2rem;
-    min-width: 1.2rem; /* Prevent icon shrinking */
+    min-width: 1.2rem; /* Evitar que el icono se encoja */
   }
 
   span {

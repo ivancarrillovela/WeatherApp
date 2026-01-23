@@ -1,13 +1,13 @@
-/* Main Toolbar (Glass Effect) */
+/* Barra de herramientas principal (Efecto cristal) */
 .main-toolbar {
-  --background: rgba(30, 40, 60, 0.85); /* Semi-transparent dark background */
-  --border-style: none; /* Remove default border */
-  backdrop-filter: blur(12px); /* Blur effect */
-  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  --background: rgba(30, 40, 60, 0.85); /* Fondo oscuro semi-transparente */
+  --border-style: none; /* Eliminar borde predeterminado */
+  backdrop-filter: blur(12px); /* Efecto de desenfoque */
+  -webkit-backdrop-filter: blur(12px); /* Soporte Safari */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Language Toggle */
+/* Selector de idioma */
 .language-toggle {
   display: flex;
   background: rgba(255, 255, 255, 0.2);
@@ -37,7 +37,7 @@
   }
 }
 
-/* Search Bar Customization */
+/* Personalización de barra de búsqueda */
 .custom-searchbar {
   --background: rgba(255, 255, 255, 0.15);
   --color: white;
@@ -49,19 +49,16 @@
   padding-right: 10px;
 }
 
-/* Location Button */
+/* Botón de ubicación */
 .location-button {
   --color: white;
 }
 
-.location-icon {
-  color: white !important;
-}
 
-/* Autocomplete Suggestions */
+/* Sugerencias de autocompletado */
 .suggestions-container {
   position: absolute;
-  top: 60px; /* Below toolbar */
+  top: 60px; /* Debajo de la barra de herramientas */
   left: 10px;
   right: 10px;
   z-index: 9999;

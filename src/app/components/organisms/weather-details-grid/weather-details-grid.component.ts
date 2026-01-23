@@ -5,6 +5,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { WeatherDetailCardComponent } from '../../molecules/weather-detail-card/weather-detail-card.component';
 import { StatusBadgeComponent } from '../../atoms/status-badge/status-badge.component';
 import { CurrentWeather } from 'src/app/core/models/weather.model';
+import { addIcons } from 'ionicons';
+import {
+  sunny,
+  navigate,
+  water,
+  cloud,
+  thermometer,
+  moon,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-weather-details-grid',
@@ -22,6 +31,10 @@ import { CurrentWeather } from 'src/app/core/models/weather.model';
 export class WeatherDetailsGridComponent {
   @Input() current!: CurrentWeather;
   @Input() currentUnit: string = 'metric';
+
+  constructor() {
+    addIcons({ sunny, navigate, water, cloud, thermometer, moon });
+  }
 
   // Ayudante para UI de Índice UV
   getUVClass(uv: number | null): string {

@@ -6,23 +6,7 @@ import { IonIcon } from '@ionic/angular/standalone';
   selector: 'app-weather-detail-card',
   standalone: true,
   imports: [CommonModule, IonIcon],
-  template: `
-    <div class="glass-card detail-card">
-      <div class="card-header">
-        <ion-icon
-          [name]="icon"
-          [color]="iconColor"
-          [style.--rotation]="iconRotation + 'deg'"
-          class="rotated-icon"
-        ></ion-icon>
-        <span>{{ title }}</span>
-      </div>
-      <div class="card-value">
-        <ng-content></ng-content>
-      </div>
-      <div class="spacer-bottom"></div>
-    </div>
-  `,
+  templateUrl: './weather-detail-card.component.html',
   styleUrls: ['./weather-detail-card.component.scss'],
 })
 export class WeatherDetailCardComponent {
